@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ixi-O 3.0 — LG U+ AI 통화 앱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --p: #5B3FE8;
+  --p-light: #EBE6FF;
+  --p-mid: #8B6FFF;
+  --p-dark: #3D20C0;
+  --bg: #F2F0FA;
+  --surface: #FFFFFF;
+  --text: #14112A;
+  --text-soft: #6B6B8A;
+  --green: #0FD18C;
+  --red: #FF4F4F;
+  --amber: #FFAA30;
+  --border: rgba(91,63,232,0.10);
+  --shadow: 0 4px 24px rgba(91,63,232,0.10);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --r: 20px;
+  --r-sm: 12px;
+  --r-lg: 28px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Sans KR', 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT — DESKTOP + MOBILE FRAME
+═══════════════════════════════════════════ */
+.app-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Left sidebar — desktop nav */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--p);
+  margin-bottom: 6px;
+  padding: 0 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.sidebar-logo span { color: var(--text-soft); font-weight: 300; font-size: 14px; }
+.sidebar-version {
+  font-size: 11px;
+  background: var(--p-light);
+  color: var(--p);
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 4px;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-soft);
+  padding: 16px 8px 6px;
+  opacity: 0.6;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-soft);
+  transition: all 0.18s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item.active { background: var(--p-light); color: var(--p); }
+.nav-item .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+.nav-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--p);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+.nav-badge.red { background: var(--red); }
+.nav-badge.green { background: var(--green); }
+
+.sidebar-user {
+  margin-top: auto;
+  padding: 14px;
+  background: var(--bg);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--p), var(--p-mid));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 15px;
+  flex-shrink: 0;
+}
+.user-info p { font-size: 13px; font-weight: 600; }
+.user-info span { font-size: 11px; color: var(--text-soft); }
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════
+   SCREENS
+═══════════════════════════════════════════ */
+.screen {
+  display: none;
+  min-height: 100vh;
+  animation: fadeIn 0.25s ease;
+}
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── PAGE HEADER ─── */
+.page-header {
+  padding: 32px 40px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-header-left h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.page-header-left p {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+.page-actions { display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  padding: 9px 18px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--p); color: #fff; }
+.btn-primary:hover { background: var(--p-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-ghost { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--p-light); color: var(--p); }
+
+/* ─── GRID / CARDS ─── */
+.page-body { padding: 28px 40px 40px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.card:hover { box-shadow: var(--shadow); transition: box-shadow 0.2s; }
+
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--p);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── STAT CARDS ─── */
+.stat-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stat-label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+.stat-value { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+.stat-change {
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 4px;
+}
+.stat-change.up { color: var(--green); }
+.stat-change.down { color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   HOME SCREEN
+═══════════════════════════════════════════ */
+.home-hero {
+  background: linear-gradient(135deg, #3D20C0 0%, #6B45F5 50%, #9B6FFF 100%);
+  padding: 36px 40px 40px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::before {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+  right: -120px; top: -160px;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  right: 60px; top: -60px;
+}
+
+.hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.hero-greeting h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.hero-greeting p { font-size: 14px; opacity: 0.75; margin-top: 4px; }
+
+.ai-status-pill {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 100px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+.pulse-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  position: relative;
+}
+.pulse-dot::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(15,209,140,0.5);
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--r-sm);
+  padding: 14px 16px;
+  backdrop-filter: blur(8px);
+}
+.hero-stat-value { font-size: 26px; font-weight: 700; }
+.hero-stat-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+/* Alert strip */
+.alert-strip {
+  display: flex; gap: 10px; padding: 16px 40px;
+  overflow-x: auto; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.alert-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap; flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.alert-chip:hover { transform: translateY(-2px); }
+.alert-chip.safe { background: #E0FBF1; color: #0AA870; }
+.alert-chip.warn { background: #FFF3E0; color: #CC7700; }
+.alert-chip.info { background: var(--p-light); color: var(--p); }
+
+/* Quick actions */
+.quick-actions {
+  padding: 28px 40px 0;
+}
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.qa-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 22px 18px;
+  display: flex; flex-direction: column;
+  align-items: flex-start; gap: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: left;
+}
+.qa-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.qa-card:active { transform: translateY(0); }
+.qa-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.qa-card-title { font-size: 14px; font-weight: 600; }
+.qa-card-desc { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+
+/* Recent calls table */
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+.section-title { font-size: 16px; font-weight: 700; }
+.section-link { font-size: 13px; color: var(--p); font-weight: 600; cursor: pointer; }
+
+.calls-table {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.calls-table-header {
+  display: grid;
+  grid-template-columns: 2.5fr 3fr 1fr 1fr 1.2fr;
+  padding: 12px 22px;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text-soft);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.call-row {
+  display: grid;
+  grid-template-columns: 2.5fr 3fr 1fr 1fr 1.2fr;
+  padding: 14px 22px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.call-row:last-child { border-bottom: none; }
+.call-row:hover { background: var(--bg); }
+
+.caller-cell { display: flex; align-items: center; gap: 12px; }
+.call-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.call-name { font-size: 14px; font-weight: 600; }
+.call-number { font-size: 12px; color: var(--text-soft); }
+
+.call-snippet { font-size: 13px; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+.call-duration, .call-time { font-size: 13px; color: var(--text-soft); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+}
+.badge-ai { background: var(--p-light); color: var(--p); }
+.badge-safe { background: #E0FBF1; color: #0AA870; }
+.badge-spam { background: #FFECEC; color: #CC3333; }
+.badge-missed { background: #FFF3E0; color: #CC7700; }
+
+/* ═══════════════════════════════════════════
+   LIVE CALL SCREEN
+═══════════════════════════════════════════ */
+.call-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 0;
+  height: calc(100vh - 73px);
+}
+
+.call-main {
+  background: linear-gradient(180deg, #1A1040 0%, #0D0825 100%);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: space-between;
+  padding: 48px 40px 40px;
+  color: #fff;
+}
+
+.caller-identity { text-align: center; }
+.call-status-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.live-pill {
+  background: rgba(15,209,140,0.2);
+  border: 1px solid rgba(15,209,140,0.4);
+  color: var(--green);
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+}
+.call-timer { font-size: 14px; opacity: 0.6; }
+.secure-badge {
+  background: rgba(91,63,232,0.3);
+  border: 1px solid rgba(139,111,255,0.4);
+  color: #9B80FF;
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 700;
+}
+
+.caller-avatar-xl {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 3px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 46px; font-weight: 700;
+  margin: 0 auto 20px;
+}
+.caller-name-xl { font-size: 34px; font-weight: 700; letter-spacing: -1px; }
+.caller-number { font-size: 15px; opacity: 0.55; margin-top: 6px; }
+
+/* transcript */
+.live-transcript-box {
+  width: 100%; max-width: 620px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 20px 24px;
+  height: 180px; overflow-y: auto;
+}
+.transcript-header {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; opacity: 0.45; margin-bottom: 14px;
+}
+.t-line { display: flex; gap: 10px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; }
+.t-who { font-weight: 700; opacity: 0.6; flex-shrink: 0; min-width: 60px; }
+.t-text { opacity: 0.9; }
+.t-ai { color: #9B80FF; }
+
+.ai-card-floating {
+  width: 100%; max-width: 620px;
+  background: rgba(91,63,232,0.3);
+  border: 1px solid rgba(139,111,255,0.35);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.ai-chip-small {
+  background: var(--p);
+  color: #fff; font-size: 10px; font-weight: 800;
+  padding: 4px 9px; border-radius: 8px; flex-shrink: 0; letter-spacing: 0.5px;
+}
+.ai-card-content { font-size: 14px; line-height: 1.6; }
+.ai-card-content strong { display: block; margin-bottom: 4px; font-size: 15px; }
+
+/* call controls */
+.call-controls-row {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 10px; width: 100%; max-width: 620px;
+}
+.ctrl {
+  background: rgba(255,255,255,0.08);
+  border: none; border-radius: 16px;
+  padding: 16px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; color: #fff;
+  font-size: 11px; font-weight: 500;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.ctrl:hover { background: rgba(255,255,255,0.15); }
+.ctrl.active-ctrl { background: rgba(91,63,232,0.5); border: 1px solid rgba(139,111,255,0.5); }
+.ctrl-icon { font-size: 22px; }
+
+.end-call-center {
+  display: flex; align-items: center; gap: 20px;
+  justify-content: center;
+}
+.end-btn {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--red);
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 6px 24px rgba(255,79,79,0.4);
+  transition: transform 0.15s;
+}
+.end-btn:hover { transform: scale(1.08); }
+
+/* right panel */
+.call-side-panel {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.panel-section { padding: 20px; border-bottom: 1px solid var(--border); }
+.panel-section:last-child { border-bottom: none; }
+.panel-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--p); margin-bottom: 14px; }
+
+.contact-card-mini {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+.contact-avatar-sm {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700;
+}
+.contact-details p { font-size: 14px; font-weight: 600; }
+.contact-details span { font-size: 12px; color: var(--text-soft); }
+
+.past-call-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.past-call-item:last-child { border-bottom: none; }
+
+.suggested-replies { display: flex; flex-wrap: wrap; gap: 8px; }
+.reply-chip {
+  background: var(--p-light);
+  color: var(--p);
+  font-size: 12px; font-weight: 600;
+  padding: 7px 14px; border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border: none; font-family: inherit;
+}
+.reply-chip:hover { background: #d8d0ff; }
+
+/* ═══════════════════════════════════════════
+   SUMMARY SCREEN
+═══════════════════════════════════════════ */
+.summary-hero {
+  background: linear-gradient(135deg, #3D20C0, #6B45F5);
+  padding: 32px 40px;
+  color: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.summary-caller-info { display: flex; align-items: center; gap: 18px; }
+.summary-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+.summary-caller-info h2 { font-size: 22px; font-weight: 700; }
+.summary-caller-info p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+.summary-header-actions { display: flex; gap: 10px; }
+.btn-white {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; padding: 9px 18px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.btn-white:hover { background: rgba(255,255,255,0.3); }
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+  padding: 28px 40px;
+}
+.summary-left { display: flex; flex-direction: column; gap: 18px; }
+.summary-right { display: flex; flex-direction: column; gap: 18px; }
+
+/* bullet points */
+.summary-points { display: flex; flex-direction: column; gap: 10px; }
+.summary-point { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.6; }
+.bullet-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--p); margin-top: 7px; flex-shrink: 0; }
+
+/* todo list */
+.todo-list { display: flex; flex-direction: column; gap: 2px; }
+.todo-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.todo-item:last-child { border-bottom: none; }
+.todo-check {
+  width: 22px; height: 22px; border-radius: 7px;
+  border: 2px solid var(--p);
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.todo-check.done { background: var(--p); border-color: var(--p); }
+.todo-check.done::after { content: '✓'; font-size: 13px; color: #fff; font-weight: 700; }
+.todo-text { font-size: 14px; flex: 1; }
+.todo-text.done-text { text-decoration: line-through; opacity: 0.45; }
+.todo-tag { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; flex-shrink: 0; }
+
+/* sentiment */
+.sentiment-bar {
+  height: 10px; border-radius: 100px;
+  background: linear-gradient(90deg, var(--red) 0%, var(--amber) 45%, var(--green) 100%);
+  position: relative; margin: 12px 0;
+}
+.sentiment-marker {
+  position: absolute; top: -5px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--p);
+  transform: translateX(-50%);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.sentiment-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-soft); }
+
+.insight-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.insight-chip {
+  background: var(--p-light);
+  color: var(--p);
+  font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 100px;
+}
+
+/* transcript full */
+.full-transcript { max-height: 360px; overflow-y: auto; }
+.ft-line {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px; line-height: 1.55;
+}
+.ft-line:last-child { border-bottom: none; }
+.ft-who { font-weight: 700; min-width: 56px; flex-shrink: 0; }
+.ft-who.them { color: var(--p); }
+.ft-who.me { color: var(--text-soft); }
+
+/* ═══════════════════════════════════════════
+   AI ASSISTANT SCREEN
+═══════════════════════════════════════════ */
+.assistant-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 73px);
+}
+
+.assistant-sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.assistant-sidebar-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-soft); padding: 8px 0; }
+
+.history-item {
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 13px;
+}
+.history-item:hover { background: var(--bg); }
+.history-item.active-hist { background: var(--p-light); color: var(--p); }
+.history-item p { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-item span { font-size: 11px; color: var(--text-soft); }
+
+.chat-main {
+  display: flex; flex-direction: column; height: 100%;
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.chat-bubble-wrap { display: flex; flex-direction: column; max-width: 65%; }
+.chat-bubble-wrap.user { align-self: flex-end; align-items: flex-end; }
+.chat-bubble-wrap.ai { align-self: flex-start; align-items: flex-start; }
+.bubble-sender { font-size: 11px; font-weight: 600; opacity: 0.5; margin-bottom: 4px; }
+
+.chat-bubble {
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-size: 14px; line-height: 1.6;
+}
+.chat-bubble.ai {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.chat-bubble.user {
+  background: var(--p);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.search-result-inline {
+  background: var(--p-light);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+.search-result-inline strong { color: var(--p); font-weight: 700; display: block; margin-bottom: 6px; }
+
+.typing-dots { display: flex; gap: 4px; padding: 4px 0; }
+.t-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--p);
+  animation: blink 1.3s infinite;
+}
+.t-dot:nth-child(2) { animation-delay: 0.2s; }
+.t-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink {
+  0%, 60%, 100% { opacity: 0.2; }
+  30% { opacity: 1; }
+}
+
+.chat-input-bar {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; gap: 10px; align-items: center;
+}
+.chat-input-field {
+  flex: 1; background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 18px;
+  font-size: 14px; font-family: inherit;
+  color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.chat-input-field:focus { border-color: var(--p); }
+.send-btn {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--p); border: none; cursor: pointer;
+  color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+}
+.send-btn:hover { background: var(--p-dark); transform: scale(1.05); }
+
+.mic-btn {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: var(--bg); border: 1px solid var(--border);
+  cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.mic-btn:hover { background: var(--p-light); }
+
+/* quick prompts */
+.quick-prompts { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 12px; }
+.qp-chip {
+  background: var(--p-light); color: var(--p);
+  border: 1px solid rgba(91,63,232,0.15);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: background 0.12s;
+}
+.qp-chip:hover { background: #d8d0ff; }
+
+/* ═══════════════════════════════════════════
+   SECURITY SCREEN
+═══════════════════════════════════════════ */
+.security-hero {
+  background: linear-gradient(135deg, #0D0825, #1A1040);
+  padding: 36px 40px;
+  color: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.score-display { display: flex; align-items: center; gap: 24px; }
+.score-ring {
+  width: 100px; height: 100px; position: relative;
+}
+.score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.score-ring-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700;
+  transform: rotate(0deg);
+}
+.score-ring-text span { font-size: 11px; font-weight: 400; opacity: 0.6; }
+.score-details h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.score-details p { font-size: 13px; opacity: 0.65; }
+
+.threat-counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.threat-counter {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r-sm); padding: 14px 18px;
+}
+.threat-counter-value { font-size: 28px; font-weight: 700; }
+.threat-counter-label { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+
+.security-body { padding: 28px 40px; display: flex; flex-direction: column; gap: 18px; }
+
+.scan-status-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+.scan-status-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.scan-status-top { display: flex; justify-content: space-between; align-items: center; }
+.scan-status-name { font-size: 14px; font-weight: 600; }
+.scan-dot { width: 10px; height: 10px; border-radius: 50%; }
+.scan-dot.on { background: var(--green); box-shadow: 0 0 0 3px rgba(15,209,140,0.2); }
+.scan-dot.warn { background: var(--amber); box-shadow: 0 0 0 3px rgba(255,170,48,0.2); }
+.scan-status-desc { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+
+.threat-log { display: flex; flex-direction: column; gap: 10px; }
+.threat-log-item {
+  background: var(--surface);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--red);
+  padding: 14px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.threat-log-item.warn-item { border-left-color: var(--amber); }
+.threat-log-item.info-item { border-left-color: var(--p); }
+.threat-emoji { font-size: 20px; }
+.threat-details p { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.threat-details span { font-size: 12px; color: var(--text-soft); }
+
+/* ═══════════════════════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .page-header { padding: 20px; }
+  .page-body { padding: 16px 20px; }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .qa-grid { grid-template-columns: repeat(2, 1fr); }
+  .calls-table-header { display: none; }
+  .call-row { grid-template-columns: 1fr auto; gap: 8px; }
+  .call-row > *:nth-child(2), .call-row > *:nth-child(3), .call-row > *:nth-child(4) { display: none; }
+  .call-layout { grid-template-columns: 1fr; }
+  .call-side-panel { display: none; }
+  .call-controls-row { grid-template-columns: repeat(3, 1fr); }
+  .summary-grid { grid-template-columns: 1fr; }
+  .assistant-layout { grid-template-columns: 1fr; }
+  .assistant-sidebar { display: none; }
+  .alert-strip { padding: 12px 20px; }
+  .quick-actions { padding: 20px 20px 0; }
+  .security-hero { flex-direction: column; gap: 20px; }
+  .threat-counters { grid-template-columns: repeat(3, 1fr); }
+  .scan-status-grid { grid-template-columns: 1fr; }
+  .security-body { padding: 20px; }
+  .home-hero { padding: 24px 20px 28px; }
+  .summary-hero { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .calls-table-header { display: none; }
+}
+
+/* Mobile nav bar */
+.mobile-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 10px 0 16px;
+  z-index: 100;
+}
+.mobile-nav-inner { display: flex; justify-content: space-around; }
+.mobile-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer; border: none; background: none; padding: 4px 14px;
+  transition: transform 0.12s;
+}
+.mobile-nav-item:active { transform: scale(0.9); }
+.mobile-nav-icon { font-size: 22px; }
+.mobile-nav-label { font-size: 10px; font-weight: 600; color: var(--text-soft); }
+.mobile-nav-item.active .mobile-nav-label { color: var(--p); }
+
+@media (max-width: 900px) {
+  .mobile-nav { display: block; }
+  .main-content { padding-bottom: 70px; }
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(91,63,232,0.2); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(91,63,232,0.35); }
+
+/* timer animation */
+@keyframes tick { from {} to {} }
+</style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      ixi<span>-O</span>
+      <span class="sidebar-version">3.0</span>
+    </div>
+
+    <div class="sidebar-section-label">메인</div>
+    <button class="nav-item active" id="nav-home" onclick="showScreen('home')">
+      <span class="nav-icon">🏠</span> 홈
+      <span class="nav-badge green">안전</span>
+    </button>
+    <button class="nav-item" id="nav-call" onclick="showScreen('call')">
+      <span class="nav-icon">📞</span> 통화 중
+      <span class="nav-badge" style="background:var(--green);">LIVE</span>
+    </button>
+    <button class="nav-item" id="nav-summary" onclick="showScreen('summary')">
+      <span class="nav-icon">📋</span> 통화 요약
+      <span class="nav-badge">3</span>
+    </button>
+
+    <div class="sidebar-section-label">AI 기능</div>
+    <button class="nav-item" id="nav-assistant" onclick="showScreen('assistant')">
+      <span class="nav-icon">🤖</span> AI 비서
+    </button>
+    <button class="nav-item" id="nav-security" onclick="showScreen('security')">
+      <span class="nav-icon">🛡️</span> 보안 대시보드
+      <span class="nav-badge red">2</span>
+    </button>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">김</div>
+      <div class="user-info">
+        <p>김민서</p>
+        <span>U+ Premium</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main-content">
+
+    <!-- ──────────── HOME ──────────── -->
+    <div class="screen active" id="screen-home">
+
+      <div class="home-hero">
+        <div class="hero-top">
+          <div class="hero-greeting">
+            <h2>안녕하세요, 민서님 👋</h2>
+            <p>오늘도 AI가 안전하게 지켜드리고 있어요</p>
+          </div>
+          <div class="ai-status-pill">
+            <div class="pulse-dot"></div>
+            AI 비서 활성화 · "헤이 익시"로 호출
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">23</div>
+            <div class="hero-stat-label">오늘 통화 수</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">14</div>
+            <div class="hero-stat-label">이번 달 차단</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">3</div>
+            <div class="hero-stat-label">AI 요약 저장</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">99</div>
+            <div class="hero-stat-label">보안 점수</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-strip">
+        <div class="alert-chip safe">✓ 오늘 보이스피싱 0건</div>
+        <div class="alert-chip info">◎ 통화 3건 AI 요약 완료</div>
+        <div class="alert-chip warn">⚠ 할 일 2개 남음</div>
+        <div class="alert-chip info" onclick="showScreen('call')">📞 현재 통화 진행 중 → 보기</div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="section-header">
+          <div class="section-title">빠른 기능</div>
+        </div>
+        <div class="qa-grid">
+          <div class="qa-card" onclick="showScreen('call')">
+            <div class="qa-icon" style="background:#EBE6FF;">📞</div>
+            <div class="qa-card-title">AI 통화 보기</div>
+            <div class="qa-card-desc">실시간 자막 및 AI 정보 카드 보기</div>
+          </div>
+          <div class="qa-card" onclick="showScreen('summary')">
+            <div class="qa-icon" style="background:#E0FBF1;">📋</div>
+            <div class="qa-card-title">통화 요약</div>
+            <div class="qa-card-desc">AI가 자동으로 정리한 핵심 내용</div>
+          </div>
+          <div class="qa-card" onclick="showScreen('assistant')">
+            <div class="qa-icon" style="background:#EBE6FF;">🤖</div>
+            <div class="qa-card-title">AI 비서</div>
+            <div class="qa-card-desc">과거 통화 검색 및 질문하기</div>
+          </div>
+          <div class="qa-card" onclick="showScreen('security')">
+            <div class="qa-icon" style="background:#FFECEC;">🛡️</div>
+            <div class="qa-card-title">보안 대시보드</div>
+            <div class="qa-card-desc">실시간 위협 탐지 현황</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-body" style="padding-top:28px;">
+        <div class="section-header">
+          <div class="section-title">최근 통화</div>
+          <div class="section-link">전체 보기 →</div>
+        </div>
+
+        <div class="calls-table">
+          <div class="calls-table-header">
+            <span>발신자</span>
+            <span>AI 요약</span>
+            <span>통화 시간</span>
+            <span>시각</span>
+            <span>상태</span>
+          </div>
+
+          <div class="call-row" onclick="showScreen('summary')">
+            <div class="caller-cell">
+              <div class="call-avatar" style="background:#EBE6FF;color:#6B45F5;">박</div>
+              <div>
+                <div class="call-name">박민준 (친구)</div>
+                <div class="call-number">010-9912-3344</div>
+              </div>
+            </div>
+            <div class="call-snippet">주말 강남 오마카세 예약, 토요일 7시, 스시료 가나 2인</div>
+            <div class="call-duration">6분 47초</div>
+            <div class="call-time">오전 10:23</div>
+            <div><span class="badge badge-ai">◎ AI 요약</span></div>
+          </div>
+
+          <div class="call-row">
+            <div class="caller-cell">
+              <div class="call-avatar" style="background:#FFECEC;color:#CC3333;">?</div>
+              <div>
+                <div class="call-name">010-8823-XXXX</div>
+                <div class="call-number">알 수 없는 번호</div>
+              </div>
+            </div>
+            <div class="call-snippet">금융 기관 사칭 패턴 감지 — 통화 자동 차단됨</div>
+            <div class="call-duration">자동 차단</div>
+            <div class="call-time">오전 9:51</div>
+            <div><span class="badge badge-spam">⚠ 위험 차단</span></div>
+          </div>
+
+          <div class="call-row">
+            <div class="caller-cell">
+              <div class="call-avatar" style="background:#E0FBF1;color:#0AA870;">엄</div>
+              <div>
+                <div class="call-name">엄마</div>
+                <div class="call-number">010-2211-5566</div>
+              </div>
+            </div>
+            <div class="call-snippet">주말 저녁 식사 약속, 토요일 오후 6시, 집에서 먹기로</div>
+            <div class="call-duration">12분 03초</div>
+            <div class="call-time">어제 오후 8:12</div>
+            <div><span class="badge badge-safe">✓ 안전</span></div>
+          </div>
+
+          <div class="call-row">
+            <div class="caller-cell">
+              <div class="call-avatar" style="background:#F5F3FF;color:#6B45F5;">김</div>
+              <div>
+                <div class="call-name">김○○ 부동산 중개사</div>
+                <div class="call-number">02-3344-5566</div>
+              </div>
+            </div>
+            <div class="call-snippet">마포구 아현동 전세 32평, 보증금 3.5억, 5월 입주 가능</div>
+            <div class="call-duration">18분 24초</div>
+            <div class="call-time">3월 5일</div>
+            <div><span class="badge badge-ai">◎ AI 요약</span></div>
+          </div>
+
+          <div class="call-row">
+            <div class="caller-cell">
+              <div class="call-avatar" style="background:#FFF3E0;color:#CC7700;">배</div>
+              <div>
+                <div class="call-name">배달의민족 고객센터</div>
+                <div class="call-number">1600-0987</div>
+              </div>
+            </div>
+            <div class="call-snippet">환불 처리 완료, 영업일 3~5일 내 입금 예정</div>
+            <div class="call-duration">4분 11초</div>
+            <div class="call-time">3월 4일</div>
+            <div><span class="badge badge-safe">✓ 안전</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── LIVE CALL ──────────── -->
+    <div class="screen" id="screen-call">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>📞 통화 중</h1>
+          <p>박민준 · AI 실시간 분석 활성화</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" onclick="showScreen('home')">← 홈으로</button>
+        </div>
+      </div>
+
+      <div class="call-layout">
+        <div class="call-main">
+          <div class="caller-identity" style="width:100%;max-width:600px;">
+            <div class="call-status-row" style="justify-content:center;margin-bottom:20px;">
+              <div class="live-pill"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;"></span> LIVE</div>
+              <div class="call-timer" id="call-timer">00:04:23</div>
+              <div class="secure-badge">🛡 안전한 통화</div>
+            </div>
+            <div class="caller-avatar-xl">박</div>
+            <div class="caller-name-xl">박민준</div>
+            <div class="caller-number">친구 · 010-9912-3344</div>
+          </div>
+
+          <div class="live-transcript-box" style="max-width:600px;width:100%;" id="live-transcript">
+            <div class="transcript-header">실시간 자막</div>
+            <div class="t-line"><span class="t-who">박민준</span><span class="t-text">야 이번 주말에 강남 그 새로 생긴 오마카세 가볼까?</span></div>
+            <div class="t-line"><span class="t-who">나</span><span class="t-text">거기 예약 되나? 요즘 핫하다던데</span></div>
+            <div class="t-line"><span class="t-who">박민준</span><span class="t-text">토요일 7시 자리 있대, 2인분 12만원</span></div>
+            <div class="t-line"><span class="t-who">나</span><span class="t-text">오케이, 어디서 만날까?</span></div>
+            <div class="t-line t-ai-line"><span class="t-who t-ai">ixi AI</span><span class="t-text" style="color:#9B80FF;font-style:italic;">강남역 맛집 정보 검색 중...</span></div>
+          </div>
+
+          <div class="ai-card-floating" style="max-width:600px;width:100%;">
+            <div class="ai-chip-small">ixi AI</div>
+            <div class="ai-card-content">
+              <strong>🍣 스시료 가나 강남점</strong>
+              ⭐ 4.8 · 토요일 19:00 예약 가능 · 2인 ₩120,000<br>
+              <span style="font-size:13px;opacity:0.8;">지하철 2호선 강남역 5번 출구 3분 거리 · 주차 가능</span>
+            </div>
+          </div>
+
+          <div style="width:100%;max-width:600px;">
+            <div class="call-controls-row">
+              <button class="ctrl" id="ctrl-mute" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">🔇</span><span>음소거</span>
+              </button>
+              <button class="ctrl active-ctrl" id="ctrl-sub" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">📄</span><span>자막 켜짐</span>
+              </button>
+              <button class="ctrl" id="ctrl-spk" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">🔊</span><span>스피커</span>
+              </button>
+              <button class="ctrl" id="ctrl-rec" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">⏺</span><span>녹음</span>
+              </button>
+              <button class="ctrl active-ctrl" id="ctrl-ai" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">🤖</span><span>AI 켜짐</span>
+              </button>
+              <button class="ctrl" id="ctrl-hold" onclick="toggleCtrl(this)">
+                <span class="ctrl-icon">⏸</span><span>대기</span>
+              </button>
+            </div>
+
+            <div class="end-call-center" style="margin-top:18px;">
+              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;" onclick="showScreen('summary')">
+                <span class="ctrl-icon">👤</span>
+              </button>
+              <button class="end-btn" onclick="showScreen('summary')" title="통화 종료 → 요약으로">📵</button>
+              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;background:rgba(91,63,232,0.4);" onclick="showScreen('assistant')">
+                <span class="ctrl-icon">💬</span>
+              </button>
+            </div>
+            <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.3);margin-top:12px;">빨간 버튼 클릭 시 통화 종료 → 요약 화면으로 이동</div>
+          </div>
+        </div>
+
+        <!-- side panel -->
+        <div class="call-side-panel">
+          <div class="panel-section">
+            <div class="panel-title">연락처 정보</div>
+            <div class="contact-card-mini">
+              <div class="contact-avatar-sm" style="background:#EBE6FF;color:#6B45F5;">박</div>
+              <div class="contact-details">
+                <p>박민준</p>
+                <span>친구 · 010-9912-3344</span>
+              </div>
+            </div>
+            <div style="font-size:13px;color:var(--text-soft);display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;">
+                <span>통화 횟수</span><strong style="color:var(--text);">47회</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span>평균 통화</span><strong style="color:var(--text);">8분 12초</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span>마지막 통화</span><strong style="color:var(--text);">2일 전</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-title">이전 통화 기억</div>
+            <div class="past-call-item">
+              <span style="font-size:13px;color:var(--text-soft);">3월 12일</span>
+              <span style="font-size:13px;">게임 얘기, PC방 약속</span>
+            </div>
+            <div class="past-call-item">
+              <span style="font-size:13px;color:var(--text-soft);">3월 5일</span>
+              <span style="font-size:13px;">생일 파티 계획</span>
+            </div>
+            <div class="past-call-item">
+              <span style="font-size:13px;color:var(--text-soft);">2월 28일</span>
+              <span style="font-size:13px;">홍대 클럽 모임</span>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-title">AI 추천 답변</div>
+            <div class="suggested-replies">
+              <button class="reply-chip">좋아!</button>
+              <button class="reply-chip">몇 시에 만날까?</button>
+              <button class="reply-chip">강남역 어때?</button>
+              <button class="reply-chip">예약할게</button>
+              <button class="reply-chip">조금 늦을 수 있어</button>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-title">실시간 감정 분석</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-soft);margin-bottom:6px;">
+              <span>통화 분위기</span>
+              <span style="color:var(--green);font-weight:700;">매우 긍정적 78%</span>
+            </div>
+            <div style="height:8px;border-radius:100px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));position:relative;">
+              <div style="position:absolute;top:-4px;left:75%;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--p);transform:translateX(-50%);"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-soft);margin-top:6px;">
+              <span>부정</span><span>긍정</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── SUMMARY ──────────── -->
+    <div class="screen" id="screen-summary">
+      <div class="summary-hero">
+        <div class="summary-caller-info">
+          <div class="summary-avatar">박</div>
+          <div>
+            <h2>박민준과의 통화 요약</h2>
+            <p>오늘 오전 10:23 · 6분 47초 · AI 스마트 요약</p>
+          </div>
+        </div>
+        <div class="summary-header-actions">
+          <button class="btn-white" onclick="showScreen('assistant')">🤖 AI에게 질문</button>
+          <button class="btn-white">📤 공유</button>
+          <button class="btn-white" onclick="showScreen('home')">← 돌아가기</button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-left">
+
+          <div class="card">
+            <div class="card-title">📋 핵심 내용</div>
+            <div class="summary-points">
+              <div class="summary-point"><div class="bullet-dot"></div><div>이번 주 <strong>토요일 저녁</strong> 강남 오마카세 식당 방문 계획 논의</div></div>
+              <div class="summary-point"><div class="bullet-dot"></div><div><strong>스시료 가나 강남점</strong> 토요일 19:00 2인 예약 확정</div></div>
+              <div class="summary-point"><div class="bullet-dot"></div><div>1인당 <strong>6만원</strong> (총 12만원), 신용카드 결제 예정</div></div>
+              <div class="summary-point"><div class="bullet-dot"></div><div>강남역 5번 출구에서 <strong>18:40</strong>에 만나기로 합의</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">✅ AI가 만든 할 일 목록</div>
+            <div class="todo-list" id="todo-list">
+              <div class="todo-item">
+                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">식당 예약 확정 문자 받기</div>
+                <div class="todo-tag" style="background:#EBE6FF;color:#6B45F5;">오늘</div>
+              </div>
+              <div class="todo-item">
+                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">토요일 18:20 출발 알람 설정</div>
+                <div class="todo-tag" style="background:#EBE6FF;color:#6B45F5;">토요일</div>
+              </div>
+              <div class="todo-item">
+                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">박민준에게 예약 확인 카카오톡 보내기</div>
+                <div class="todo-tag" style="background:#FFF3E0;color:#CC7700;">오늘</div>
+              </div>
+              <div class="todo-item">
+                <div class="todo-check done" onclick="toggleTodo(this)"></div>
+                <div class="todo-text done-text">맛집 위치 및 교통편 확인 완료</div>
+                <div class="todo-tag" style="background:#F5F5F5;color:#999;">완료</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📝 전체 통화 내용</div>
+            <div class="full-transcript">
+              <div class="ft-line"><span class="ft-who them">박민준</span><span>야 이번 주말에 강남 그 새로 생긴 오마카세 가볼까?</span></div>
+              <div class="ft-line"><span class="ft-who me">나</span><span>거기 예약 되나? 요즘 핫하다던데</span></div>
+              <div class="ft-line"><span class="ft-who them">박민준</span><span>스시료 가나 강남점인데, 토요일 7시 자리 있대. 2인분 12만원</span></div>
+              <div class="ft-line"><span class="ft-who me">나</span><span>오케이 좋아. 강남역에서 만날까?</span></div>
+              <div class="ft-line"><span class="ft-who them">박민준</span><span>응 5번 출구 앞에서 6시 40분에 보자</span></div>
+              <div class="ft-line"><span class="ft-who me">나</span><span>좋아, 그때 봐!</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="summary-right">
+
+          <div class="card">
+            <div class="card-title">😊 감정 & 관계 분석</div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-soft);margin-bottom:4px;">
+              <span>통화 분위기</span>
+              <span style="color:var(--green);font-weight:700;">긍정적 78%</span>
+            </div>
+            <div class="sentiment-bar">
+              <div class="sentiment-marker" style="left:78%;"></div>
+            </div>
+            <div class="sentiment-labels">
+              <span>부정적</span><span>긍정적</span>
+            </div>
+            <div class="insight-chips">
+              <div class="insight-chip">친밀한 대화</div>
+              <div class="insight-chip">공통 관심사</div>
+              <div class="insight-chip">계획적</div>
+              <div class="insight-chip">유쾌한 분위기</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔍 AI가 찾은 정보</div>
+            <div style="background:var(--p-light);border-radius:var(--r-sm);padding:14px;margin-bottom:10px;">
+              <div style="font-weight:700;color:var(--p);margin-bottom:6px;">🍣 스시료 가나 강남점</div>
+              <div style="font-size:13px;color:var(--text);line-height:1.7;">
+                ⭐ 4.8 / 5.0 (리뷰 342개)<br>
+                📍 강남구 테헤란로 123 · 강남역 5번출구<br>
+                💰 1인 60,000원 (오마카세 12코스)<br>
+                🕐 토요일 19:00 예약 가능<br>
+                🚗 주차 가능 (2시간 무료)
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;">예약 바로 하기 →</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🤖 AI에게 더 물어보기</div>
+            <div style="font-size:13px;color:var(--text-soft);margin-bottom:12px;">이 통화와 관련된 질문을 AI 비서에게 해보세요</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('박민준이랑 전에 어디서 만났지?')">박민준이랑 전에 어디서 만났지?</button>
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('강남 맛집 추천해줘')">강남 맛집 더 추천해줘</button>
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('이번 달 약속 정리해줘')">이번 달 약속 정리해줘</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── ASSISTANT ──────────── -->
+    <div class="screen" id="screen-assistant">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>🤖 ixi AI 비서</h1>
+          <p>통화 내용 기반 개인 AI — 모든 기억을 가지고 있어요</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" onclick="showScreen('home')">← 홈</button>
+          <button class="btn btn-primary">+ 새 대화</button>
+        </div>
+      </div>
+
+      <div class="assistant-layout">
+        <div class="assistant-sidebar">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px;">대화 기록</div>
+          <div class="history-item active-hist">
+            <p>강남 오마카세 예약</p>
+            <span>오늘 오전 10:31</span>
+          </div>
+          <div class="history-item">
+            <p>부동산 매물 정보 요약</p>
+            <span>3월 5일</span>
+          </div>
+          <div class="history-item">
+            <p>이번 달 약속 정리</p>
+            <span>3월 3일</span>
+          </div>
+          <div class="history-item">
+            <p>박민준 생일 선물 추천</p>
+            <span>2월 28일</span>
+          </div>
+          <div class="history-item">
+            <p>환불 처리 현황</p>
+            <span>2월 26일</span>
+          </div>
+        </div>
+
+        <div class="chat-main">
+          <div class="chat-messages" id="chat-messages">
+
+            <div class="chat-bubble-wrap ai">
+              <div class="bubble-sender">ixi AI</div>
+              <div class="chat-bubble ai">
+                안녕하세요, 민서님! 저는 모든 통화 내용을 학습한 ixi AI 비서입니다. 통화 기록 검색, 할 일 관리, 정보 검색 등 무엇이든 도와드릴게요. 😊
+              </div>
+            </div>
+
+            <div class="chat-bubble-wrap user">
+              <div class="bubble-sender">민서님</div>
+              <div class="chat-bubble user">지난달에 부동산 중개사랑 통화한 내용 요약해줘</div>
+            </div>
+
+            <div class="chat-bubble-wrap ai">
+              <div class="bubble-sender">ixi AI</div>
+              <div class="chat-bubble ai">
+                3월 5일 통화 기록에서 찾았습니다:
+                <div class="search-result-inline">
+                  <strong>📁 김○○ 중개사 · 3월 5일 · 18분 24초</strong>
+                  • 마포구 아현동 전세 32평 매물 논의<br>
+                  • 보증금 3억 5천만원, 2025년 5월 입주 가능<br>
+                  • 집주인 직거래 선호, 다음 주 임장 약속<br>
+                  • 주변 시세 대비 10% 저렴 (AI 분석)
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-bubble-wrap user">
+              <div class="bubble-sender">민서님</div>
+              <div class="chat-bubble user" id="last-user-msg">박민준이 지난 달에 생일 선물로 뭘 원한다고 했지?</div>
+            </div>
+
+            <div class="chat-bubble-wrap ai" id="typing-bubble-wrap">
+              <div class="bubble-sender">ixi AI</div>
+              <div class="chat-bubble ai">
+                <div class="typing-dots">
+                  <div class="t-dot"></div>
+                  <div class="t-dot"></div>
+                  <div class="t-dot"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="quick-prompts">
+            <button class="qp-chip" onclick="quickPrompt('이번 주 약속 정리해줘')">이번 주 약속</button>
+            <button class="qp-chip" onclick="quickPrompt('최근 스팸 전화 목록 보여줘')">스팸 목록</button>
+            <button class="qp-chip" onclick="quickPrompt('할 일 목록 보여줘')">할 일 목록</button>
+            <button class="qp-chip" onclick="quickPrompt('오늘 통화 요약해줘')">오늘 통화</button>
+          </div>
+
+          <div class="chat-input-bar">
+            <button class="mic-btn">🎤</button>
+            <input class="chat-input-field" id="chat-input" type="text" placeholder="질문하거나 말씀해 주세요... (Enter로 전송)" onkeydown="handleChatInput(event)" />
+            <button class="send-btn" onclick="sendChat()">↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────── SECURITY ──────────── -->
+    <div class="screen" id="screen-security">
+      <div class="security-hero">
+        <div class="score-display">
+          <div class="score-ring">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#0FD18C" stroke-width="8"
+                stroke-dasharray="264" stroke-dashoffset="14" stroke-linecap="round"/>
+            </svg>
+            <div class="score-ring-text">
+              99<span>점</span>
+            </div>
+          </div>
+          <div class="score-details">
+            <h2>보안 상태 최상</h2>
+            <p>모든 AI 보안 시스템이 정상 작동 중입니다</p>
+            <p style="margin-top:6px;font-size:12px;color:rgba(255,255,255,0.5);">마지막 스캔: 방금 전</p>
+          </div>
+        </div>
+
+        <div class="threat-counters">
+          <div class="threat-counter">
+            <div class="threat-counter-value" style="color:#FF4F4F;">14</div>
+            <div class="threat-counter-label">이달 차단 위협</div>
+          </div>
+          <div class="threat-counter">
+            <div class="threat-counter-value" style="color:#9B80FF;">3</div>
+            <div class="threat-counter-label">딥보이스 탐지</div>
+          </div>
+          <div class="threat-counter">
+            <div class="threat-counter-value" style="color:#0FD18C;">0</div>
+            <div class="threat-counter-label">실제 피해 발생</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="security-body">
+
+        <div>
+          <div class="section-header">
+            <div class="section-title">실시간 AI 보안 시스템</div>
+          </div>
+          <div class="scan-status-grid">
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">보이스피싱 탐지</div>
+                <div class="scan-dot on"></div>
+              </div>
+              <div class="scan-status-desc">통화 내 사기 패턴, 금융기관 사칭, 긴박감 유도 등 실시간 분석</div>
+            </div>
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">안티 딥보이스</div>
+                <div class="scan-dot on"></div>
+              </div>
+              <div class="scan-status-desc">AI로 합성된 가짜 목소리를 0.3초 내 식별 및 경고</div>
+            </div>
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">위험 URL 탐지</div>
+                <div class="scan-dot on"></div>
+              </div>
+              <div class="scan-status-desc">문자 내 악성 링크를 클릭 전에 자동 차단</div>
+            </div>
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">악성 앱 스캔</div>
+                <div class="scan-dot on"></div>
+              </div>
+              <div class="scan-status-desc">통화 데이터에 접근하는 앱 실시간 감시</div>
+            </div>
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">번호 진위 확인</div>
+                <div class="scan-dot on"></div>
+              </div>
+              <div class="scan-status-desc">발신 번호 스푸핑 탐지 및 실제 발신자 확인</div>
+            </div>
+            <div class="scan-status-card">
+              <div class="scan-status-top">
+                <div class="scan-status-name">쿠폰 만료 알림</div>
+                <div class="scan-dot warn"></div>
+              </div>
+              <div class="scan-status-desc">통화에서 언급된 쿠폰 2개 곧 만료 예정</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-header">
+            <div class="section-title">오늘 차단된 위협 (2건)</div>
+          </div>
+          <div class="threat-log">
+            <div class="threat-log-item">
+              <div class="threat-emoji">📞</div>
+              <div class="threat-details">
+                <p>보이스피싱 의심 전화 자동 차단</p>
+                <span>010-8823-XXXX · 오전 9:51 · 금융기관 사칭 패턴 감지 (신뢰도 98.7%) · 즉시 차단</span>
+              </div>
+            </div>
+            <div class="threat-log-item warn-item">
+              <div class="threat-emoji">🔗</div>
+              <div class="threat-details">
+                <p>위험 URL 접속 차단</p>
+                <span>카카오톡 수신 링크 · 오전 11:23 · 피싱 사이트 패턴 일치 (신뢰도 96.2%) · 접속 차단</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">📊 월간 보안 통계</div>
+            <div class="grid-3" style="gap:10px;margin-top:4px;">
+              <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:14px 8px;">
+                <div style="font-size:28px;font-weight:700;color:var(--red);">14</div>
+                <div style="font-size:11px;color:var(--text-soft);">차단된 위협</div>
+              </div>
+              <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:14px 8px;">
+                <div style="font-size:28px;font-weight:700;color:var(--p);">3</div>
+                <div style="font-size:11px;color:var(--text-soft);">딥보이스 탐지</div>
+              </div>
+              <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:14px 8px;">
+                <div style="font-size:28px;font-weight:700;color:var(--green);">0</div>
+                <div style="font-size:11px;color:var(--text-soft);">피해 발생</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;font-size:13px;color:var(--text-soft);">
+              지난 달 대비 차단 건수 <strong style="color:var(--green);">↓ 23% 감소</strong>. AI 보안 학습 효과로 예방 능력이 향상되고 있습니다.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔒 보안 권장 사항</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span style="font-size:18px;">✅</span>
+                <div style="font-size:13px;"><strong>딥보이스 필터</strong> 활성화됨</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span style="font-size:18px;">✅</span>
+                <div style="font-size:13px;"><strong>AI 자동 차단</strong> 켜짐</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span style="font-size:18px;">⚠️</span>
+                <div style="font-size:13px;"><strong>2단계 인증</strong> 설정 권장</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <span style="font-size:18px;">⚠️</span>
+                <div style="font-size:13px;"><strong>만료 쿠폰 2개</strong> 확인 필요</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Mobile Nav -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mobile-nav-item active" id="mob-home" onclick="showScreen('home')">
+      <span class="mobile-nav-icon">🏠</span>
+      <span class="mobile-nav-label">홈</span>
+    </button>
+    <button class="mobile-nav-item" id="mob-call" onclick="showScreen('call')">
+      <span class="mobile-nav-icon">📞</span>
+      <span class="mobile-nav-label">통화</span>
+    </button>
+    <button class="mobile-nav-item" id="mob-summary" onclick="showScreen('summary')">
+      <span class="mobile-nav-icon">📋</span>
+      <span class="mobile-nav-label">요약</span>
+    </button>
+    <button class="mobile-nav-item" id="mob-assistant" onclick="showScreen('assistant')">
+      <span class="mobile-nav-icon">🤖</span>
+      <span class="mobile-nav-label">AI 비서</span>
+    </button>
+    <button class="mobile-nav-item" id="mob-security" onclick="showScreen('security')">
+      <span class="mobile-nav-icon">🛡️</span>
+      <span class="mobile-nav-label">보안</span>
+    </button>
+  </div>
+</nav>
+
+<script>
+/* ─── Navigation ─── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.getElementById('nav-' + name);
+  if (nav) nav.classList.add('active');
+
+  document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+  const mob = document.getElementById('mob-' + name);
+  if (mob) mob.classList.add('active');
+
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+/* ─── Todo Toggle ─── */
+function toggleTodo(el) {
+  el.classList.toggle('done');
+  const txt = el.nextElementSibling;
+  txt.classList.toggle('done-text');
+}
+
+/* ─── Call Controls ─── */
+function toggleCtrl(el) {
+  el.classList.toggle('active-ctrl');
+  const icon = el.querySelector('.ctrl-icon');
+  const label = el.querySelector('span:last-child');
+  if (el.id === 'ctrl-mute') {
+    label.textContent = el.classList.contains('active-ctrl') ? '음소거 중' : '음소거';
+  }
+  if (el.id === 'ctrl-sub') {
+    label.textContent = el.classList.contains('active-ctrl') ? '자막 켜짐' : '자막 꺼짐';
+  }
+  if (el.id === 'ctrl-rec') {
+    label.textContent = el.classList.contains('active-ctrl') ? '녹음 중' : '녹음';
+  }
+  if (el.id === 'ctrl-ai') {
+    label.textContent = el.classList.contains('active-ctrl') ? 'AI 켜짐' : 'AI 꺼짐';
+  }
+}
+
+/* ─── Call Timer ─── */
+let seconds = 263;
+setInterval(() => {
+  seconds++;
+  const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const s = String(seconds % 60).padStart(2, '0');
+  const el = document.getElementById('call-timer');
+  if (el) el.textContent = `00:${m}:${s}`;
+}, 1000);
+
+/* ─── Chat ─── */
+const aiReplies = [
+  '2월 28일 통화 기록에서 찾았습니다. 박민준 씨가 생일에 에어팟 프로나 게임 기프티콘을 원한다고 말씀하셨어요.',
+  '통화 기록을 분석해보니 이번 주 토요일 강남 약속 외에 일요일 오후 3시 헬스장 같이 가기로 한 기록도 있습니다.',
+  '네, 찾았습니다! 관련 내용을 정리해 드릴게요. 추가로 궁금한 점 있으시면 말씀해 주세요.',
+  '통화 기록 기반으로 이번 달 약속을 정리했습니다. 총 5건의 약속이 있으며, 3건은 완료, 2건이 남아있습니다.',
+];
+let aiReplyIdx = 0;
+
+function handleChatInput(e) {
+  if (e.key === 'Enter') sendChat();
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  addUserBubble(text);
+  input.value = '';
+  setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
+  aiReplyIdx++;
+}
+
+function quickPrompt(text) {
+  addUserBubble(text);
+  setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
+  aiReplyIdx++;
+  showScreen('assistant');
+}
+
+function askAssistant(text) {
+  showScreen('assistant');
+  setTimeout(() => {
+    addUserBubble(text);
+    setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
+    aiReplyIdx++;
+  }, 300);
+}
+
+function addUserBubble(text) {
+  const container = document.getElementById('chat-messages');
+  const typingBubble = document.getElementById('typing-bubble-wrap');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-bubble-wrap user';
+  wrap.innerHTML = `<div class="bubble-sender">민서님</div><div class="chat-bubble user">${text}</div>`;
+  container.insertBefore(wrap, typingBubble);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addAiBubble(text) {
+  const container = document.getElementById('chat-messages');
+  const typingBubble = document.getElementById('typing-bubble-wrap');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-bubble-wrap ai';
+  wrap.innerHTML = `<div class="bubble-sender">ixi AI</div><div class="chat-bubble ai">${text}</div>`;
+  container.insertBefore(wrap, typingBubble);
+  container.scrollTop = container.scrollHeight;
+}
+
+/* ─── Live transcript auto-scroll ─── */
+const transcriptEl = document.getElementById('live-transcript');
+if (transcriptEl) transcriptEl.scrollTop = transcriptEl.scrollHeight;
+</script>
+
+</body>
+</html>
