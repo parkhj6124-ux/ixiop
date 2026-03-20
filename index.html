@@ -943,8 +943,653 @@ body {
 }
 
 /* ═══════════════════════════════════════════
-   SCROLLBAR
+   CONTACTS SCREEN
 ═══════════════════════════════════════════ */
+.contacts-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: calc(100vh - 73px);
+}
+
+/* Search bar */
+.contacts-search-bar {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 10;
+}
+.search-input-wrap {
+  position: relative;
+}
+.search-input-wrap .search-icon {
+  position: absolute; left: 13px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px; pointer-events: none;
+}
+.contact-search-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 14px 10px 38px;
+  font-size: 14px; font-family: inherit;
+  color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.contact-search-input:focus { border-color: var(--p); background: #fff; }
+
+/* Filter chips */
+.contact-filter-chips {
+  display: flex; gap: 8px; padding: 10px 20px 0;
+  overflow-x: auto;
+}
+.filter-chip {
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-soft);
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: all 0.14s; font-family: inherit;
+}
+.filter-chip:hover { background: var(--p-light); color: var(--p); border-color: rgba(91,63,232,0.2); }
+.filter-chip.active-filter { background: var(--p); color: #fff; border-color: var(--p); }
+
+/* Contact list panel */
+.contacts-list-panel {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+
+.alpha-section { }
+.alpha-label {
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--p); padding: 12px 20px 6px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+}
+
+.contact-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.12s;
+}
+.contact-list-item:last-child { border-bottom: none; }
+.contact-list-item:hover { background: var(--bg); }
+.contact-list-item.selected { background: var(--p-light); }
+
+.contact-list-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; flex-shrink: 0;
+  position: relative;
+}
+.online-dot {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--green); border: 2px solid var(--surface);
+}
+
+.contact-list-info { flex: 1; min-width: 0; }
+.contact-list-name { font-size: 14px; font-weight: 600; }
+.contact-list-sub { font-size: 12px; color: var(--text-soft); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.contact-list-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+.contact-list-item:hover .contact-list-actions { opacity: 1; }
+.quick-call-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--green); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: transform 0.12s;
+  box-shadow: 0 2px 8px rgba(15,209,140,0.3);
+}
+.quick-call-btn:hover { transform: scale(1.1); }
+.quick-msg-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--p-light); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: transform 0.12s;
+}
+.quick-msg-btn:hover { transform: scale(1.1); }
+
+/* Contact detail panel */
+.contact-detail-panel {
+  background: var(--bg);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+
+.contact-detail-hero {
+  background: linear-gradient(135deg, #3D20C0, #7B55FF);
+  padding: 36px 32px 28px;
+  color: #fff;
+  display: flex; align-items: flex-end; gap: 24px;
+}
+.contact-detail-avatar {
+  width: 88px; height: 88px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px; font-weight: 700;
+  border: 3px solid rgba(255,255,255,0.25);
+  flex-shrink: 0;
+}
+.contact-detail-info { flex: 1; }
+.contact-detail-info h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+.contact-detail-info p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+.contact-detail-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.contact-tag {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 100px; padding: 4px 12px;
+  font-size: 11px; font-weight: 600;
+}
+
+/* Action buttons row */
+.contact-action-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; padding: 20px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.contact-action-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 8px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1px solid var(--border);
+  cursor: pointer; font-size: 12px; font-weight: 600;
+  color: var(--text); font-family: inherit;
+  transition: all 0.15s;
+}
+.contact-action-btn:hover { background: var(--p-light); color: var(--p); border-color: rgba(91,63,232,0.2); transform: translateY(-2px); }
+.contact-action-btn.primary-action { background: var(--p); color: #fff; border-color: var(--p); }
+.contact-action-btn.primary-action:hover { background: var(--p-dark); }
+.contact-action-icon { font-size: 22px; }
+
+/* Detail sections */
+.contact-detail-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.detail-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.detail-info-row:last-child { border-bottom: none; }
+.detail-info-label { color: var(--text-soft); font-size: 13px; }
+.detail-info-value { font-weight: 500; color: var(--text); }
+.detail-info-value.link-val { color: var(--p); cursor: pointer; }
+
+/* AI insight card */
+.ai-insight-card {
+  background: linear-gradient(135deg, rgba(91,63,232,0.08), rgba(139,111,255,0.04));
+  border: 1px solid rgba(91,63,232,0.15);
+  border-radius: var(--r);
+  padding: 18px;
+}
+.ai-insight-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ai-insight-chip { background: var(--p); color: #fff; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 8px; letter-spacing: 0.5px; }
+.ai-insight-title { font-size: 13px; font-weight: 700; color: var(--p); }
+.ai-insight-points { display: flex; flex-direction: column; gap: 8px; }
+.ai-insight-point { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.5; }
+.ai-bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--p); margin-top: 6px; flex-shrink: 0; }
+
+/* Call history mini */
+.call-history-mini { display: flex; flex-direction: column; gap: 2px; }
+.call-hist-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.1s;
+}
+.call-hist-row:last-child { border-bottom: none; }
+.call-hist-row:hover { background: rgba(91,63,232,0.03); }
+.call-hist-icon { font-size: 16px; width: 20px; text-align: center; }
+.call-hist-info { flex: 1; }
+.call-hist-info p { font-size: 13px; font-weight: 500; }
+.call-hist-info span { font-size: 11px; color: var(--text-soft); }
+.call-hist-duration { font-size: 12px; color: var(--text-soft); }
+.call-hist-summary-btn {
+  font-size: 11px; font-weight: 600; color: var(--p);
+  background: var(--p-light); border: none;
+  padding: 4px 10px; border-radius: 20px; cursor: pointer;
+  font-family: inherit; transition: background 0.12s;
+}
+.call-hist-summary-btn:hover { background: #d8d0ff; }
+
+/* Keypad overlay */
+.keypad-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(20,17,42,0.7); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.keypad-overlay.open { display: flex; }
+
+.keypad-modal {
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 28px 32px 32px;
+  width: 340px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: slideUp 0.2s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.keypad-display {
+  background: var(--bg); border-radius: var(--r-sm);
+  padding: 14px 18px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.keypad-number { font-size: 26px; font-weight: 600; letter-spacing: 2px; min-height: 36px; }
+.keypad-contact-name { font-size: 12px; color: var(--p); font-weight: 600; margin-top: 2px; }
+.keypad-delete {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; color: var(--text-soft); padding: 4px;
+}
+.keypad-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.key-btn {
+  aspect-ratio: 1; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.12s; font-family: inherit;
+}
+.key-btn:hover { background: var(--p-light); border-color: rgba(91,63,232,0.2); transform: scale(0.97); }
+.key-btn:active { transform: scale(0.93); }
+.key-number { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+.key-alpha { font-size: 9px; font-weight: 600; color: var(--text-soft); letter-spacing: 1px; }
+.key-btn.call-key { background: var(--green); border-color: var(--green); }
+.key-btn.call-key .key-number { color: #fff; font-size: 24px; }
+.key-btn.call-key:hover { background: #0ab87a; }
+.keypad-close {
+  width: 100%; padding: 11px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1px solid var(--border);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: inherit; color: var(--text-soft);
+  transition: background 0.12s;
+}
+.keypad-close:hover { background: #FFECEC; color: var(--red); }
+
+/* Floating call button */
+.fab-call {
+  position: fixed; bottom: 28px; right: 28px; z-index: 100;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: var(--green); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 6px 24px rgba(15,209,140,0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fab-call:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(15,209,140,0.5); }
+
+@media (max-width: 900px) {
+  .contacts-layout { grid-template-columns: 1fr; }
+  .contact-detail-panel { display: none; }
+  .contacts-layout.detail-open .contacts-list-panel { display: none; }
+  .contacts-layout.detail-open .contact-detail-panel { display: flex; }
+  .contact-list-actions { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════
+   VOICE PHISHING ALERT & GUARDIAN SYSTEM
+═══════════════════════════════════════════ */
+
+/* ── Threat Detection Banner (in-call) ── */
+.threat-banner {
+  display: none;
+  position: absolute; top: 0; left: 0; right: 0;
+  background: linear-gradient(135deg, #8B0000, #CC2200);
+  color: #fff;
+  padding: 14px 20px;
+  z-index: 50;
+  animation: threatSlideDown 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.threat-banner.show { display: flex; align-items: center; gap: 14px; }
+
+@keyframes threatSlideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.threat-banner-icon { font-size: 28px; flex-shrink: 0; animation: shake 0.5s infinite; }
+@keyframes shake {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+.threat-banner-text { flex: 1; }
+.threat-banner-text h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+.threat-banner-text p { font-size: 12px; opacity: 0.85; }
+.threat-banner-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.threat-action-btn {
+  padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none; font-family: inherit; transition: all 0.14s;
+}
+.threat-action-btn.primary { background: #fff; color: #CC2200; }
+.threat-action-btn.primary:hover { background: #ffe0e0; }
+.threat-action-btn.secondary { background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.35); }
+.threat-action-btn.secondary:hover { background: rgba(255,255,255,0.3); }
+
+/* ── Full-screen Guardian Alert Modal ── */
+.guardian-alert-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(10, 5, 30, 0.88);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.guardian-alert-overlay.open { display: flex; }
+
+.guardian-alert-modal {
+  background: var(--surface);
+  border-radius: 28px;
+  width: 100%; max-width: 520px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+  animation: alertPop 0.35s cubic-bezier(0.34,1.46,0.64,1);
+}
+@keyframes alertPop {
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.alert-modal-header {
+  background: linear-gradient(135deg, #7A0000, #CC2200);
+  padding: 28px 28px 22px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.alert-modal-header::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 10px,
+    rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px
+  );
+}
+.alert-header-top { display: flex; align-items: flex-start; gap: 16px; position: relative; }
+.alert-siren-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+  animation: sirenPulse 1s infinite;
+}
+@keyframes sirenPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+  50% { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+}
+.alert-header-info h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.3px; }
+.alert-header-info p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+.threat-confidence {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.15); border-radius: 100px;
+  padding: 5px 14px; margin-top: 12px;
+  font-size: 13px; font-weight: 700; position: relative;
+}
+.conf-bar-bg {
+  width: 80px; height: 6px; border-radius: 100px;
+  background: rgba(255,255,255,0.25); overflow: hidden;
+}
+.conf-bar-fill {
+  height: 100%; border-radius: 100px; background: #fff;
+  animation: growBar 1s ease 0.4s both;
+}
+@keyframes growBar { from { width: 0; } }
+
+/* Evidence section */
+.alert-evidence {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.alert-evidence-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--red); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.evidence-list { display: flex; flex-direction: column; gap: 8px; }
+.evidence-item {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: #FFF5F5; border-radius: 10px;
+  padding: 10px 12px; border-left: 3px solid var(--red);
+}
+.ev-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.ev-text { font-size: 13px; line-height: 1.5; color: var(--text); }
+.ev-text strong { color: var(--red); }
+
+/* Network info */
+.alert-nw-info {
+  padding: 16px 28px;
+  background: #FFF8F0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.nw-icon { font-size: 22px; }
+.nw-text p { font-size: 13px; font-weight: 600; color: var(--text); }
+.nw-text span { font-size: 12px; color: var(--text-soft); }
+.nw-badge {
+  margin-left: auto; background: #FFF3E0; color: #CC7700;
+  font-size: 11px; font-weight: 700; padding: 4px 10px;
+  border-radius: 20px; flex-shrink: 0;
+}
+
+/* Guardian connection */
+.alert-guardian-section { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+.guardian-section-title {
+  font-size: 12px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--p); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.guardian-list { display: flex; flex-direction: column; gap: 10px; }
+.guardian-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg); border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+}
+.guardian-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; flex-shrink: 0;
+}
+.guardian-info { flex: 1; min-width: 0; }
+.guardian-info p { font-size: 14px; font-weight: 600; }
+.guardian-info span { font-size: 12px; color: var(--text-soft); }
+.guardian-connect-btn {
+  padding: 8px 16px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all 0.14s; border: none;
+  flex-shrink: 0;
+}
+.guardian-connect-btn.call-g { background: var(--green); color: #fff; }
+.guardian-connect-btn.call-g:hover { background: #0ab87a; transform: scale(1.04); }
+.guardian-connect-btn.msg-g { background: var(--p-light); color: var(--p); }
+.guardian-connect-btn.msg-g:hover { background: #d8d0ff; }
+
+/* Status steps */
+.guardian-status-steps {
+  display: none; padding: 14px;
+  background: var(--p-light); border-radius: var(--r-sm);
+  margin-top: 10px;
+}
+.guardian-status-steps.show { display: block; }
+.status-step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; padding: 6px 0;
+}
+.step-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.step-dot.done { background: var(--green); color: #fff; }
+.step-dot.active { background: var(--p); color: #fff; animation: stepPulse 1s infinite; }
+.step-dot.pending { background: rgba(107,63,232,0.15); color: var(--p); }
+@keyframes stepPulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+
+/* Alert footer actions */
+.alert-modal-actions {
+  padding: 18px 28px 24px;
+  display: flex; gap: 10px;
+}
+.alert-main-action {
+  flex: 1; padding: 13px; border-radius: var(--r-sm);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: all 0.15s; border: none;
+}
+.alert-main-action.end-call-action { background: var(--red); color: #fff; }
+.alert-main-action.end-call-action:hover { background: #d93030; }
+.alert-main-action.dismiss-action { background: var(--bg); color: var(--text-soft); border: 1px solid var(--border); }
+.alert-main-action.dismiss-action:hover { background: #e8e8f0; }
+
+/* ── Guardian Settings Screen ── */
+.guardian-settings-screen { background: var(--bg); }
+
+.guardian-hero {
+  background: linear-gradient(135deg, #1A0A40, #3D20C0);
+  padding: 32px 40px 28px;
+  color: #fff;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.guardian-hero-left h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.guardian-hero-left p { font-size: 13px; opacity: 0.7; line-height: 1.6; }
+.guardian-hero-badge {
+  background: rgba(15,209,140,0.2);
+  border: 1px solid rgba(15,209,140,0.4);
+  border-radius: var(--r-sm); padding: 12px 18px; text-align: center;
+}
+.guardian-hero-badge .badge-num { font-size: 28px; font-weight: 800; color: var(--green); }
+.guardian-hero-badge .badge-lbl { font-size: 11px; opacity: 0.75; margin-top: 2px; }
+
+.guardian-body { padding: 28px 40px; display: flex; flex-direction: column; gap: 18px; }
+
+/* Guardian contacts manage */
+.guardian-manage-card { background: var(--surface); border-radius: var(--r); border: 1px solid var(--border); overflow: hidden; }
+.guardian-manage-header {
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.guardian-manage-header h3 { font-size: 15px; font-weight: 700; }
+.guardian-manage-header span { font-size: 12px; color: var(--text-soft); }
+
+.guardian-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px; border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+}
+.guardian-row:last-child { border-bottom: none; }
+.guardian-row:hover { background: var(--bg); }
+.g-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700; flex-shrink: 0; }
+.g-info { flex: 1; }
+.g-info p { font-size: 14px; font-weight: 600; }
+.g-info span { font-size: 12px; color: var(--text-soft); }
+.g-priority-badge {
+  font-size: 10px; font-weight: 800; padding: 3px 9px;
+  border-radius: 20px; flex-shrink: 0;
+}
+.g-priority-1 { background: #FFECEC; color: #CC3333; }
+.g-priority-2 { background: #FFF3E0; color: #CC7700; }
+.g-priority-3 { background: var(--p-light); color: var(--p); }
+.g-toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.g-toggle {
+  width: 44px; height: 24px; border-radius: 100px;
+  background: var(--green); border: none; cursor: pointer;
+  position: relative; transition: background 0.2s;
+}
+.g-toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  transition: transform 0.2s;
+}
+.g-toggle.off { background: #ccc; }
+.g-toggle.off::after { transform: translateX(0); }
+.g-toggle:not(.off)::after { transform: translateX(20px); }
+
+/* Trigger settings */
+.trigger-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.trigger-card {
+  background: var(--surface); border-radius: var(--r); border: 1px solid var(--border);
+  padding: 18px; cursor: pointer; transition: all 0.15s;
+}
+.trigger-card:hover { border-color: rgba(91,63,232,0.3); box-shadow: var(--shadow-sm); }
+.trigger-card.active-trigger { border-color: var(--p); background: var(--p-light); }
+.trigger-icon { font-size: 26px; margin-bottom: 10px; }
+.trigger-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.trigger-desc { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+.trigger-card.active-trigger .trigger-desc { color: var(--p); opacity: 0.8; }
+
+/* NW flow diagram */
+.nw-flow {
+  display: flex; align-items: center; gap: 0;
+  background: var(--surface); border-radius: var(--r);
+  border: 1px solid var(--border); padding: 24px;
+  overflow-x: auto;
+}
+.nw-node {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; min-width: 90px; text-align: center;
+}
+.nw-node-icon {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.nw-node-label { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.nw-node-sub { font-size: 10px; color: var(--text-soft); }
+.nw-arrow {
+  flex: 1; height: 2px; background: linear-gradient(90deg, var(--p), var(--p-mid));
+  position: relative; min-width: 30px;
+}
+.nw-arrow::after {
+  content: ''; position: absolute; right: -6px; top: -5px;
+  border: 6px solid transparent; border-left-color: var(--p-mid);
+}
+.nw-arrow-label {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; font-weight: 700; color: var(--p);
+  white-space: nowrap; background: var(--surface); padding: 1px 4px;
+}
+
+/* Response time stat */
+.response-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+.resp-stat {
+  background: var(--surface); border-radius: var(--r); border: 1px solid var(--border);
+  padding: 18px; text-align: center;
+}
+.resp-stat-value { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+.resp-stat-label { font-size: 11px; color: var(--text-soft); margin-top: 4px; line-height: 1.4; }
+
+/* In-call guardian status bar */
+.guardian-in-call-bar {
+  display: none; width: 100%; max-width: 620px;
+  background: rgba(15,209,140,0.15);
+  border: 1px solid rgba(15,209,140,0.35);
+  border-radius: var(--r-sm); padding: 12px 16px;
+  color: #fff;
+  align-items: center; gap: 12px;
+  margin-bottom: 8px;
+}
+.guardian-in-call-bar.show { display: flex; }
+.g-bar-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: pulse 1.4s infinite; flex-shrink: 0; }
+.g-bar-text { flex: 1; font-size: 13px; }
+.g-bar-text strong { font-weight: 700; }
+.g-bar-cancel { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .guardian-hero { flex-direction: column; gap: 16px; align-items: flex-start; padding: 24px 20px; }
+  .guardian-body { padding: 16px 20px; }
+  .trigger-grid { grid-template-columns: 1fr; }
+  .response-stats { grid-template-columns: repeat(2,1fr); }
+  .nw-flow { padding: 16px; }
+  .alert-modal-header { padding: 22px 20px 18px; }
+  .alert-evidence, .alert-guardian-section, .alert-nw-info { padding: 16px 20px; }
+  .alert-modal-actions { padding: 14px 20px 20px; flex-direction: column; }
+  .threat-banner.show { flex-wrap: wrap; }
+}
+
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(91,63,232,0.2); border-radius: 100px; }
@@ -979,9 +1624,17 @@ body {
       <span class="nav-badge">3</span>
     </button>
 
+    <button class="nav-item" id="nav-contacts" onclick="showScreen('contacts')">
+      <span class="nav-icon">👥</span> 연락처
+    </button>
+
     <div class="sidebar-section-label">AI 기능</div>
     <button class="nav-item" id="nav-assistant" onclick="showScreen('assistant')">
       <span class="nav-icon">🤖</span> AI 비서
+    </button>
+    <button class="nav-item" id="nav-guardian" onclick="showScreen('guardian')">
+      <span class="nav-icon">🛡️</span> 보호자 연결
+      <span class="nav-badge" style="background:#CC2200;">NEW</span>
     </button>
     <button class="nav-item" id="nav-security" onclick="showScreen('security')">
       <span class="nav-icon">🛡️</span> 보안 대시보드
@@ -1170,6 +1823,19 @@ body {
       </div>
 
       <div class="call-layout">
+        <!-- Threat detection banner (shown on detection) -->
+        <div id="threat-banner-bar" class="threat-banner" style="position:relative;">
+          <div class="threat-banner-icon">🚨</div>
+          <div class="threat-banner-text">
+            <h3>보이스피싱 의심 패턴 탐지!</h3>
+            <p>금융기관 사칭 · 긴박감 유도 · 계좌이체 요구 감지 — 신뢰도 96.4%</p>
+          </div>
+          <div class="threat-banner-actions">
+            <button class="threat-action-btn primary" onclick="openGuardianAlert()">🛡️ 보호자 연결</button>
+            <button class="threat-action-btn secondary" onclick="hideThreatBanner()">무시</button>
+          </div>
+        </div>
+
         <div class="call-main">
           <div class="caller-identity" style="width:100%;max-width:600px;">
             <div class="call-status-row" style="justify-content:center;margin-bottom:20px;">
@@ -1180,6 +1846,20 @@ body {
             <div class="caller-avatar-xl">박</div>
             <div class="caller-name-xl">박민준</div>
             <div class="caller-number">친구 · 010-9912-3344</div>
+          </div>
+
+          <!-- Guardian connected status bar -->
+          <div class="guardian-in-call-bar" id="guardian-in-call-bar" style="max-width:600px;">
+            <div class="g-bar-dot"></div>
+            <div class="g-bar-text"><strong>보호자 연결 중</strong> — 엄마에게 상황 공유됨 · 통화 모니터링 활성</div>
+            <button class="g-bar-cancel" onclick="cancelGuardian()">연결 해제</button>
+          </div>
+
+          <!-- Demo trigger button -->
+          <div style="max-width:600px;width:100%;margin-bottom:-8px;">
+            <button onclick="simulateThreat()" style="width:100%;padding:10px;background:rgba(204,34,0,0.18);border:1px dashed rgba(255,79,79,0.5);border-radius:12px;color:#FF8080;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.15s;" onmouseover="this.style.background='rgba(204,34,0,0.28)'" onmouseout="this.style.background='rgba(204,34,0,0.18)'">
+              🎭 [데모] 보이스피싱 탐지 시뮬레이션 →
+            </button>
           </div>
 
           <div class="live-transcript-box" style="max-width:600px;width:100%;" id="live-transcript">
@@ -1525,6 +2205,319 @@ body {
       </div>
     </div>
 
+    <!-- ──────────── CONTACTS ──────────── -->
+    <div class="screen" id="screen-contacts">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>👥 연락처</h1>
+          <p>132명 · AI 통화 분석 연동</p>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost" onclick="openKeypad()">⌨️ 키패드</button>
+          <button class="btn btn-primary">+ 연락처 추가</button>
+        </div>
+      </div>
+
+      <div class="contacts-layout" id="contacts-layout">
+
+        <!-- Left: list -->
+        <div class="contacts-list-panel">
+          <div class="contacts-search-bar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="contact-search-input" id="contact-search" type="text" placeholder="이름, 번호, 그룹으로 검색..." oninput="filterContacts(this.value)" />
+            </div>
+          </div>
+          <div class="contact-filter-chips">
+            <button class="filter-chip active-filter" onclick="setFilter(this,'all')">전체</button>
+            <button class="filter-chip" onclick="setFilter(this,'fav')">⭐ 즐겨찾기</button>
+            <button class="filter-chip" onclick="setFilter(this,'recent')">🕐 최근 통화</button>
+            <button class="filter-chip" onclick="setFilter(this,'family')">👨‍👩‍👧 가족</button>
+            <button class="filter-chip" onclick="setFilter(this,'work')">💼 직장</button>
+            <button class="filter-chip" onclick="setFilter(this,'friend')">🤝 친구</button>
+          </div>
+
+          <div id="contact-list-body">
+            <!-- ㄱ -->
+            <div class="alpha-section" data-alpha="ㄱ">
+              <div class="alpha-label">ㄱ</div>
+              <div class="contact-list-item" onclick="showContactDetail('김지현')" data-group="family fav">
+                <div class="contact-list-avatar" style="background:#E0FBF1;color:#0AA870;">김<div class="online-dot"></div></div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">김지현 (언니)</div>
+                  <div class="contact-list-sub">010-3344-5566 · 가족 · 마지막 통화 어제</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('김지현')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㄴ -->
+            <div class="alpha-section" data-alpha="ㄴ">
+              <div class="alpha-label">ㄴ</div>
+              <div class="contact-list-item" onclick="showContactDetail('남준혁')" data-group="work">
+                <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">남</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">남준혁 과장</div>
+                  <div class="contact-list-sub">010-7788-1234 · 직장 · LG U+</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('남준혁 과장')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㅂ -->
+            <div class="alpha-section" data-alpha="ㅂ">
+              <div class="alpha-label">ㅂ</div>
+              <div class="contact-list-item selected" onclick="showContactDetail('박민준')" data-group="friend fav recent">
+                <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">박<div class="online-dot"></div></div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">박민준 (친구)</div>
+                  <div class="contact-list-sub">010-9912-3344 · 친구 · 오늘 통화</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('박민준')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+              <div class="contact-list-item" onclick="showContactDetail('박서윤')" data-group="work">
+                <div class="contact-list-avatar" style="background:#FFF3E0;color:#CC7700;">박</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">박서윤 대리</div>
+                  <div class="contact-list-sub">010-5566-7788 · 직장 · 3일 전 통화</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('박서윤 대리')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㅇ -->
+            <div class="alpha-section" data-alpha="ㅇ">
+              <div class="alpha-label">ㅇ</div>
+              <div class="contact-list-item" onclick="showContactDetail('엄마')" data-group="family fav">
+                <div class="contact-list-avatar" style="background:#FFECEC;color:#CC3333;">엄</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">엄마 ⭐</div>
+                  <div class="contact-list-sub">010-2211-5566 · 가족 · 어제 통화</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('엄마')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+              <div class="contact-list-item" onclick="showContactDetail('이수진')" data-group="friend">
+                <div class="contact-list-avatar" style="background:#E0FBF1;color:#0AA870;">이<div class="online-dot"></div></div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">이수진 (친구)</div>
+                  <div class="contact-list-sub">010-1234-5678 · 친구 · 2일 전 통화</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('이수진')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㅈ -->
+            <div class="alpha-section" data-alpha="ㅈ">
+              <div class="alpha-label">ㅈ</div>
+              <div class="contact-list-item" onclick="showContactDetail('정현우')" data-group="work recent">
+                <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">정</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">정현우 팀장</div>
+                  <div class="contact-list-sub">010-9900-1122 · 직장 · 오늘 통화</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('정현우 팀장')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㅊ -->
+            <div class="alpha-section" data-alpha="ㅊ">
+              <div class="alpha-label">ㅊ</div>
+              <div class="contact-list-item" onclick="showContactDetail('최민호')" data-group="friend">
+                <div class="contact-list-avatar" style="background:#F5F3FF;color:#6B45F5;">최</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">최민호 (친구)</div>
+                  <div class="contact-list-sub">010-3456-7890 · 친구 · 1주일 전</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('최민호')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ㅎ -->
+            <div class="alpha-section" data-alpha="ㅎ">
+              <div class="alpha-label">ㅎ</div>
+              <div class="contact-list-item" onclick="showContactDetail('한승우')" data-group="work">
+                <div class="contact-list-avatar" style="background:#FFF3E0;color:#CC7700;">한</div>
+                <div class="contact-list-info">
+                  <div class="contact-list-name">한승우 부장</div>
+                  <div class="contact-list-sub">010-6677-8899 · 직장 · 3일 전</div>
+                </div>
+                <div class="contact-list-actions">
+                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('한승우 부장')" title="전화">📞</button>
+                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: detail -->
+        <div class="contact-detail-panel" id="contact-detail-panel">
+          <div class="contact-detail-hero">
+            <div class="contact-detail-avatar" id="detail-avatar" style="background:rgba(255,255,255,0.15);">박</div>
+            <div class="contact-detail-info">
+              <h2 id="detail-name">박민준</h2>
+              <p id="detail-sub">친구 · 010-9912-3344</p>
+              <div class="contact-detail-tags">
+                <div class="contact-tag">⭐ 즐겨찾기</div>
+                <div class="contact-tag">🤝 친구</div>
+                <div class="contact-tag">✓ AI 분석 47건</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="contact-action-row">
+            <button class="contact-action-btn primary-action" onclick="quickCallContact('박민준')">
+              <span class="contact-action-icon">📞</span>
+              <span>전화하기</span>
+            </button>
+            <button class="contact-action-btn">
+              <span class="contact-action-icon">💬</span>
+              <span>문자 보내기</span>
+            </button>
+            <button class="contact-action-btn" onclick="showScreen('assistant')">
+              <span class="contact-action-icon">🤖</span>
+              <span>AI 대화 검색</span>
+            </button>
+            <button class="contact-action-btn" onclick="showScreen('summary')">
+              <span class="contact-action-icon">📋</span>
+              <span>통화 요약</span>
+            </button>
+          </div>
+
+          <div class="contact-detail-body">
+
+            <!-- AI insight -->
+            <div class="ai-insight-card">
+              <div class="ai-insight-header">
+                <div class="ai-insight-chip">ixi AI</div>
+                <div class="ai-insight-title">이 연락처에 대한 AI 인사이트</div>
+              </div>
+              <div class="ai-insight-points">
+                <div class="ai-insight-point"><div class="ai-bullet"></div><div>최근 통화에서 <strong>강남 오마카세</strong> 예약 언급 → 토요일 7시 약속 있음</div></div>
+                <div class="ai-insight-point"><div class="ai-bullet"></div><div>주로 <strong>주말 저녁</strong>에 통화하는 패턴 (47회 분석)</div></div>
+                <div class="ai-insight-point"><div class="ai-bullet"></div><div>생일은 <strong>5월 14일</strong> — 에어팟 프로 선물 원한다고 언급</div></div>
+                <div class="ai-insight-point"><div class="ai-bullet"></div><div>통화 분위기 평균 <strong>긍정 82%</strong> — 매우 친밀한 관계</div></div>
+              </div>
+            </div>
+
+            <!-- Basic info -->
+            <div class="card" style="padding:18px 20px;">
+              <div class="card-title">📱 연락처 정보</div>
+              <div class="detail-info-row">
+                <span class="detail-info-label">휴대폰</span>
+                <span class="detail-info-value link-val" onclick="quickCallContact('박민준')">010-9912-3344 📞</span>
+              </div>
+              <div class="detail-info-row">
+                <span class="detail-info-label">이메일</span>
+                <span class="detail-info-value link-val">mjpark@gmail.com</span>
+              </div>
+              <div class="detail-info-row">
+                <span class="detail-info-label">생일</span>
+                <span class="detail-info-value">5월 14일 🎂</span>
+              </div>
+              <div class="detail-info-row">
+                <span class="detail-info-label">그룹</span>
+                <span class="detail-info-value">친구 · 즐겨찾기</span>
+              </div>
+              <div class="detail-info-row">
+                <span class="detail-info-label">메모</span>
+                <span class="detail-info-value" style="color:var(--text-soft);font-size:13px;">대학 친구, 게임 좋아함</span>
+              </div>
+            </div>
+
+            <!-- Call stats -->
+            <div class="card" style="padding:18px 20px;">
+              <div class="card-title">📊 통화 통계</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+                <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:12px 8px;">
+                  <div style="font-size:22px;font-weight:700;color:var(--p);">47</div>
+                  <div style="font-size:11px;color:var(--text-soft);">총 통화</div>
+                </div>
+                <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:12px 8px;">
+                  <div style="font-size:22px;font-weight:700;color:var(--green);">8분</div>
+                  <div style="font-size:11px;color:var(--text-soft);">평균 통화</div>
+                </div>
+                <div style="text-align:center;background:var(--bg);border-radius:var(--r-sm);padding:12px 8px;">
+                  <div style="font-size:22px;font-weight:700;color:var(--amber);">82%</div>
+                  <div style="font-size:11px;color:var(--text-soft);">긍정 감정</div>
+                </div>
+              </div>
+              <div style="font-size:12px;color:var(--text-soft);">주요 통화 주제: <span style="color:var(--p);font-weight:600;">맛집 탐방</span> · <span style="color:var(--p);font-weight:600;">게임</span> · <span style="color:var(--p);font-weight:600;">약속 잡기</span></div>
+            </div>
+
+            <!-- Recent calls -->
+            <div class="card" style="padding:18px 20px;">
+              <div class="card-title">🕐 최근 통화 기록</div>
+              <div class="call-history-mini">
+                <div class="call-hist-row">
+                  <div class="call-hist-icon">📞</div>
+                  <div class="call-hist-info">
+                    <p>오늘 오전 10:23</p>
+                    <span>강남 오마카세 예약 논의</span>
+                  </div>
+                  <div class="call-hist-duration">6분 47초</div>
+                  <button class="call-hist-summary-btn" onclick="showScreen('summary')">요약 보기</button>
+                </div>
+                <div class="call-hist-row">
+                  <div class="call-hist-icon" style="color:var(--text-soft);">📵</div>
+                  <div class="call-hist-info">
+                    <p>3월 12일 오후 9:14</p>
+                    <span>게임 얘기, PC방 약속</span>
+                  </div>
+                  <div class="call-hist-duration">14분 02초</div>
+                  <button class="call-hist-summary-btn">요약 보기</button>
+                </div>
+                <div class="call-hist-row">
+                  <div class="call-hist-icon">📞</div>
+                  <div class="call-hist-info">
+                    <p>3월 5일 오후 7:30</p>
+                    <span>생일 파티 계획</span>
+                  </div>
+                  <div class="call-hist-duration">22분 18초</div>
+                  <button class="call-hist-summary-btn">요약 보기</button>
+                </div>
+                <div class="call-hist-row">
+                  <div class="call-hist-icon">📞</div>
+                  <div class="call-hist-info">
+                    <p>2월 28일 오후 11:04</p>
+                    <span>홍대 클럽 모임</span>
+                  </div>
+                  <div class="call-hist-duration">8분 55초</div>
+                  <button class="call-hist-summary-btn">요약 보기</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ──────────── SECURITY ──────────── -->
     <div class="screen" id="screen-security">
       <div class="security-hero">
@@ -1683,7 +2676,338 @@ body {
       </div>
     </div>
 
+    <!-- ──────────── GUARDIAN SETTINGS ──────────── -->
+    <div class="screen" id="screen-guardian">
+      <div class="guardian-hero">
+        <div class="guardian-hero-left">
+          <h1>🛡️ 보호자 연결 설정</h1>
+          <p>보이스피싱 탐지 시 지정된 보호자에게<br>U+ 네트워크를 통해 즉시 알리고 3자 통화로 연결합니다.</p>
+        </div>
+        <div class="guardian-hero-badge">
+          <div class="badge-num">2</div>
+          <div class="badge-lbl">보호자 등록됨</div>
+        </div>
+      </div>
+
+      <div class="guardian-body">
+
+        <!-- NW Flow Diagram -->
+        <div class="card" style="padding:22px;">
+          <div class="card-title">📡 U+ 네트워크 기반 탐지 → 보호자 연결 흐름</div>
+          <div class="nw-flow">
+            <div class="nw-node">
+              <div class="nw-node-icon" style="background:#FFECEC;">📞</div>
+              <div class="nw-node-label">의심 통화<br>수신</div>
+              <div class="nw-node-sub">발신자 연결</div>
+            </div>
+            <div class="nw-arrow" style="position:relative;flex:1;min-width:28px;">
+              <div class="nw-arrow-label">NW 패킷 분석</div>
+            </div>
+            <div class="nw-node">
+              <div class="nw-node-icon" style="background:#EBE6FF;">🤖</div>
+              <div class="nw-node-label">U+ AI<br>실시간 분석</div>
+              <div class="nw-node-sub">기지국 레벨</div>
+            </div>
+            <div class="nw-arrow" style="position:relative;flex:1;min-width:28px;">
+              <div class="nw-arrow-label">패턴 매칭</div>
+            </div>
+            <div class="nw-node">
+              <div class="nw-node-icon" style="background:#FFECEC;">🚨</div>
+              <div class="nw-node-label">위협 탐지<br>알림 발송</div>
+              <div class="nw-node-sub">0.3초 이내</div>
+            </div>
+            <div class="nw-arrow" style="position:relative;flex:1;min-width:28px;">
+              <div class="nw-arrow-label">즉시 연결</div>
+            </div>
+            <div class="nw-node">
+              <div class="nw-node-icon" style="background:#E0FBF1;">👨‍👩‍👧</div>
+              <div class="nw-node-label">보호자<br>긴급 연결</div>
+              <div class="nw-node-sub">3자 통화</div>
+            </div>
+            <div class="nw-arrow" style="position:relative;flex:1;min-width:28px;">
+              <div class="nw-arrow-label">자동 처리</div>
+            </div>
+            <div class="nw-node">
+              <div class="nw-node-icon" style="background:#EBE6FF;">🏛️</div>
+              <div class="nw-node-label">경찰청<br>자동 신고</div>
+              <div class="nw-node-sub">선택 시</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Response stats -->
+        <div class="response-stats">
+          <div class="resp-stat">
+            <div class="resp-stat-value" style="color:var(--green);">0.3초</div>
+            <div class="resp-stat-label">NW 탐지 → 알림 발송</div>
+          </div>
+          <div class="resp-stat">
+            <div class="resp-stat-value" style="color:var(--p);">96.4%</div>
+            <div class="resp-stat-label">평균 탐지 정확도</div>
+          </div>
+          <div class="resp-stat">
+            <div class="resp-stat-value" style="color:var(--amber);">14건</div>
+            <div class="resp-stat-label">이달 차단된 위협</div>
+          </div>
+          <div class="resp-stat">
+            <div class="resp-stat-value" style="color:var(--red);">₩0</div>
+            <div class="resp-stat-label">실제 피해 발생액</div>
+          </div>
+        </div>
+
+        <!-- Guardian contacts -->
+        <div class="guardian-manage-card">
+          <div class="guardian-manage-header">
+            <h3>👨‍👩‍👧 보호자 연락처 관리</h3>
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px;" onclick="addGuardian()">+ 보호자 추가</button>
+          </div>
+
+          <div class="guardian-row">
+            <div class="g-avatar" style="background:#FFECEC;color:#CC3333;">엄</div>
+            <div class="g-info">
+              <p>엄마</p>
+              <span>010-2211-5566 · 가족 · 즉시 전화 + 문자</span>
+            </div>
+            <div class="g-priority-badge g-priority-1">1순위</div>
+            <div class="g-toggle-wrap">
+              <span style="font-size:12px;color:var(--text-soft);">활성</span>
+              <button class="g-toggle" onclick="toggleGuardian(this)"></button>
+            </div>
+          </div>
+
+          <div class="guardian-row">
+            <div class="g-avatar" style="background:#E0FBF1;color:#0AA870;">김</div>
+            <div class="g-info">
+              <p>김지현 (언니)</p>
+              <span>010-3344-5566 · 가족 · 문자만</span>
+            </div>
+            <div class="g-priority-badge g-priority-2">2순위</div>
+            <div class="g-toggle-wrap">
+              <span style="font-size:12px;color:var(--text-soft);">활성</span>
+              <button class="g-toggle" onclick="toggleGuardian(this)"></button>
+            </div>
+          </div>
+
+          <div class="guardian-row" style="opacity:0.5;">
+            <div class="g-avatar" style="background:#F0F0F0;color:#999;">+</div>
+            <div class="g-info">
+              <p style="color:var(--text-soft);">보호자 추가</p>
+              <span>최대 5명까지 등록 가능</span>
+            </div>
+            <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" onclick="addGuardian()">추가</button>
+          </div>
+        </div>
+
+        <!-- Trigger settings -->
+        <div>
+          <div class="section-header">
+            <div class="section-title">⚙️ 탐지 시 동작 설정</div>
+          </div>
+          <div class="trigger-grid">
+            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">📢</div>
+              <div class="trigger-title">즉시 알림 팝업</div>
+              <div class="trigger-desc">탐지 즉시 화면에 경고 팝업 표시 및 진동</div>
+            </div>
+            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">📞</div>
+              <div class="trigger-title">보호자 자동 전화</div>
+              <div class="trigger-desc">1순위 보호자에게 자동으로 전화 연결</div>
+            </div>
+            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">💬</div>
+              <div class="trigger-title">보호자 문자 발송</div>
+              <div class="trigger-desc">탐지 내용 요약 + 현재 위치 문자 자동 발송</div>
+            </div>
+            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">⏺️</div>
+              <div class="trigger-title">통화 자동 녹음</div>
+              <div class="trigger-desc">탐지 순간부터 통화 내용 자동 녹음 시작</div>
+            </div>
+            <div class="trigger-card" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">🏛️</div>
+              <div class="trigger-title">경찰청 자동 신고</div>
+              <div class="trigger-desc">경찰청 112에 자동으로 신고 (확인 후 발송)</div>
+            </div>
+            <div class="trigger-card" onclick="toggleTrigger(this)">
+              <div class="trigger-icon">📵</div>
+              <div class="trigger-title">자동 통화 차단</div>
+              <div class="trigger-desc">고신뢰도(95% 이상) 탐지 시 자동 차단</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Threshold setting -->
+        <div class="card">
+          <div class="card-title">🎚 탐지 민감도 설정</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+                <span style="color:var(--text-soft);">탐지 임계값</span>
+                <span id="threshold-val" style="font-weight:700;color:var(--p);">80% 이상 시 알림</span>
+              </div>
+              <input type="range" min="60" max="99" value="80" style="width:100%;" oninput="updateThreshold(this.value)">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-soft);margin-top:4px;">
+                <span>민감 (오탐 多)</span><span>정밀 (오탐 少)</span>
+              </div>
+            </div>
+            <div style="background:var(--p-light);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--p);">
+              💡 현재 설정: <strong>신뢰도 80% 이상</strong>인 경우 보호자에게 알림 발송. 일반 가정에 권장되는 설정입니다.
+            </div>
+          </div>
+        </div>
+
+        <!-- Demo trigger -->
+        <div class="card" style="border:2px dashed rgba(91,63,232,0.2);background:var(--p-light);">
+          <div class="card-title" style="color:var(--p);">🎭 기능 데모</div>
+          <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px;">보이스피싱 탐지 알림이 어떻게 작동하는지 직접 체험해 보세요.</p>
+          <button class="btn btn-primary" onclick="openGuardianAlert()" style="width:100%;padding:13px;font-size:14px;">
+            🚨 보이스피싱 탐지 시뮬레이션 실행
+          </button>
+        </div>
+
+      </div>
+    </div>
+
   </main>
+</div>
+
+<!-- ═══ GUARDIAN ALERT MODAL ═══ -->
+<div class="guardian-alert-overlay" id="guardian-alert-overlay">
+  <div class="guardian-alert-modal">
+
+    <div class="alert-modal-header">
+      <div class="alert-header-top">
+        <div class="alert-siren-icon">🚨</div>
+        <div class="alert-header-info">
+          <h2>보이스피싱 의심 통화 탐지!</h2>
+          <p>LG U+ AI가 현재 통화에서 보이스피싱 패턴을 감지했습니다.<br>보호자에게 즉시 알리고 연결하시겠습니까?</p>
+          <div class="threat-confidence">
+            <span>탐지 신뢰도</span>
+            <div class="conf-bar-bg"><div class="conf-bar-fill" style="width:96%"></div></div>
+            <span style="font-weight:800;">96.4%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-evidence">
+      <div class="alert-evidence-title">⚠ 탐지된 위협 패턴</div>
+      <div class="evidence-list">
+        <div class="evidence-item">
+          <div class="ev-icon">🏦</div>
+          <div class="ev-text"><strong>금융기관 사칭</strong> — "금융감독원", "경찰청 수사관" 등 기관명 반복 언급</div>
+        </div>
+        <div class="evidence-item">
+          <div class="ev-icon">⏰</div>
+          <div class="ev-text"><strong>긴박감 유도</strong> — "지금 당장", "30분 안에" 등 시간 압박 표현 다수 감지</div>
+        </div>
+        <div class="evidence-item">
+          <div class="ev-icon">💸</div>
+          <div class="ev-text"><strong>이체·계좌 요구</strong> — 안전계좌 이체 및 현금 인출 유도 패턴 확인</div>
+        </div>
+        <div class="evidence-item">
+          <div class="ev-icon">🎭</div>
+          <div class="ev-text"><strong>딥보이스 의심</strong> — 발화 패턴이 AI 합성음 특징과 74% 일치</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-nw-info">
+      <div class="nw-icon">📡</div>
+      <div class="nw-text">
+        <p>U+ 네트워크 AI 실시간 분석 완료</p>
+        <span>기지국 패킷 분석 · 발신지 해외 VoIP 경유 확인 (우즈베키스탄)</span>
+      </div>
+      <div class="nw-badge">🌐 NW 기반 탐지</div>
+    </div>
+
+    <div class="alert-guardian-section">
+      <div class="guardian-section-title">
+        <span>👨‍👩‍👧 보호자 즉시 연결</span>
+      </div>
+      <div class="guardian-list">
+        <div class="guardian-item">
+          <div class="guardian-avatar" style="background:#FFECEC;color:#CC3333;">엄</div>
+          <div class="guardian-info">
+            <p>엄마 <span style="font-size:10px;background:#FFECEC;color:#CC3333;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">우선순위 1</span></p>
+            <span>010-2211-5566 · 가족</span>
+          </div>
+          <button class="guardian-connect-btn call-g" onclick="connectGuardian('엄마', '010-2211-5566')">📞 전화 연결</button>
+          <button class="guardian-connect-btn msg-g" onclick="msgGuardian('엄마')">💬 문자</button>
+        </div>
+        <div class="guardian-item">
+          <div class="guardian-avatar" style="background:#E0FBF1;color:#0AA870;">김</div>
+          <div class="guardian-info">
+            <p>김지현 (언니) <span style="font-size:10px;background:#E0FBF1;color:#0AA870;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">우선순위 2</span></p>
+            <span>010-3344-5566 · 가족</span>
+          </div>
+          <button class="guardian-connect-btn call-g" onclick="connectGuardian('김지현', '010-3344-5566')">📞 전화 연결</button>
+          <button class="guardian-connect-btn msg-g" onclick="msgGuardian('김지현')">💬 문자</button>
+        </div>
+      </div>
+
+      <!-- Connection status steps (shown after connecting) -->
+      <div class="guardian-status-steps" id="guardian-steps">
+        <div class="status-step">
+          <div class="step-dot done" id="step1-dot">✓</div>
+          <span id="step1-text" style="font-size:13px;color:var(--text);">위협 탐지 완료 — AI 분석 보고서 생성</span>
+        </div>
+        <div class="status-step">
+          <div class="step-dot active" id="step2-dot">2</div>
+          <span id="step2-text" style="font-size:13px;color:var(--text);">보호자에게 긴급 알림 전송 중...</span>
+        </div>
+        <div class="status-step">
+          <div class="step-dot pending" id="step3-dot">3</div>
+          <span id="step3-text" style="font-size:13px;color:var(--text-soft);">3자 통화 연결 대기 중</span>
+        </div>
+        <div class="status-step">
+          <div class="step-dot pending" id="step4-dot">4</div>
+          <span id="step4-text" style="font-size:13px;color:var(--text-soft);">통화 자동 녹음 & 경찰 신고 준비</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-modal-actions">
+      <button class="alert-main-action end-call-action" onclick="endSuspiciousCall()">📵 의심 통화 즉시 종료</button>
+      <button class="alert-main-action dismiss-action" onclick="closeGuardianAlert()">계속 통화 (위험 감수)</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ GUARDIAN SETTINGS SCREEN ═══ -->
+<!-- (injected into main-content via JS) -->
+
+<!-- Keypad Modal -->
+<div class="keypad-overlay" id="keypad-overlay" onclick="closeKeypadOutside(event)">
+  <div class="keypad-modal">
+    <div class="keypad-display">
+      <div>
+        <div class="keypad-number" id="keypad-number"></div>
+        <div class="keypad-contact-name" id="keypad-contact-name"></div>
+      </div>
+      <button class="keypad-delete" onclick="keypadDelete()">⌫</button>
+    </div>
+    <div class="keypad-grid">
+      <button class="key-btn" onclick="keypadPress('1')"><span class="key-number">1</span><span class="key-alpha"></span></button>
+      <button class="key-btn" onclick="keypadPress('2')"><span class="key-number">2</span><span class="key-alpha">ABC</span></button>
+      <button class="key-btn" onclick="keypadPress('3')"><span class="key-number">3</span><span class="key-alpha">DEF</span></button>
+      <button class="key-btn" onclick="keypadPress('4')"><span class="key-number">4</span><span class="key-alpha">GHI</span></button>
+      <button class="key-btn" onclick="keypadPress('5')"><span class="key-number">5</span><span class="key-alpha">JKL</span></button>
+      <button class="key-btn" onclick="keypadPress('6')"><span class="key-number">6</span><span class="key-alpha">MNO</span></button>
+      <button class="key-btn" onclick="keypadPress('7')"><span class="key-number">7</span><span class="key-alpha">PQRS</span></button>
+      <button class="key-btn" onclick="keypadPress('8')"><span class="key-number">8</span><span class="key-alpha">TUV</span></button>
+      <button class="key-btn" onclick="keypadPress('9')"><span class="key-number">9</span><span class="key-alpha">WXYZ</span></button>
+      <button class="key-btn" onclick="keypadPress('*')"><span class="key-number" style="font-size:28px;">*</span></button>
+      <button class="key-btn" onclick="keypadPress('0')"><span class="key-number">0</span><span class="key-alpha">+</span></button>
+      <button class="key-btn" onclick="keypadPress('#')"><span class="key-number">#</span></button>
+    </div>
+    <button class="key-btn call-key" style="width:100%;aspect-ratio:unset;padding:16px;border-radius:var(--r-sm);margin-bottom:10px;gap:8px;flex-direction:row;" onclick="keypadCall()">
+      <span class="key-number">📞 전화 걸기</span>
+    </button>
+    <button class="keypad-close" onclick="closeKeypad()">닫기</button>
+  </div>
 </div>
 
 <!-- Mobile Nav -->
@@ -1692,6 +3016,10 @@ body {
     <button class="mobile-nav-item active" id="mob-home" onclick="showScreen('home')">
       <span class="mobile-nav-icon">🏠</span>
       <span class="mobile-nav-label">홈</span>
+    </button>
+    <button class="mobile-nav-item" id="mob-contacts" onclick="showScreen('contacts')">
+      <span class="mobile-nav-icon">👥</span>
+      <span class="mobile-nav-label">연락처</span>
     </button>
     <button class="mobile-nav-item" id="mob-call" onclick="showScreen('call')">
       <span class="mobile-nav-icon">📞</span>
@@ -1826,9 +3154,233 @@ function addAiBubble(text) {
   container.scrollTop = container.scrollHeight;
 }
 
-/* ─── Live transcript auto-scroll ─── */
+/* ─── Guardian / Voice Phishing Alert ─── */
+function simulateThreat() {
+  // Show threat banner on call screen
+  const banner = document.getElementById('threat-banner-bar');
+  banner.classList.add('show');
+  // Change secure badge to danger
+  const secureBadge = document.querySelector('.secure-badge');
+  if (secureBadge) {
+    secureBadge.textContent = '⚠ 위협 감지됨';
+    secureBadge.style.background = 'rgba(204,34,0,0.4)';
+    secureBadge.style.borderColor = 'rgba(255,79,79,0.5)';
+    secureBadge.style.color = '#FF8080';
+  }
+  // Auto-open alert after 1.5s for demo
+  setTimeout(openGuardianAlert, 1500);
+}
+
+function hideThreatBanner() {
+  document.getElementById('threat-banner-bar').classList.remove('show');
+}
+
+function openGuardianAlert() {
+  hideThreatBanner();
+  document.getElementById('guardian-alert-overlay').classList.add('open');
+  // Reset steps
+  resetSteps();
+}
+
+function closeGuardianAlert() {
+  document.getElementById('guardian-alert-overlay').classList.remove('open');
+}
+
+function resetSteps() {
+  document.getElementById('guardian-steps').classList.remove('show');
+  document.getElementById('step2-dot').className = 'step-dot active';
+  document.getElementById('step2-dot').textContent = '2';
+  document.getElementById('step2-text').textContent = '보호자에게 긴급 알림 전송 중...';
+  document.getElementById('step3-dot').className = 'step-dot pending';
+  document.getElementById('step3-dot').textContent = '3';
+  document.getElementById('step3-text').style.color = 'var(--text-soft)';
+  document.getElementById('step4-dot').className = 'step-dot pending';
+  document.getElementById('step4-dot').textContent = '4';
+  document.getElementById('step4-text').style.color = 'var(--text-soft)';
+}
+
+function connectGuardian(name, number) {
+  const steps = document.getElementById('guardian-steps');
+  steps.classList.add('show');
+
+  // Animate step progression
+  setTimeout(() => {
+    document.getElementById('step2-dot').className = 'step-dot done';
+    document.getElementById('step2-dot').textContent = '✓';
+    document.getElementById('step2-text').textContent = name + '에게 긴급 알림 발송 완료';
+    document.getElementById('step3-dot').className = 'step-dot active';
+    document.getElementById('step3-dot').textContent = '3';
+    document.getElementById('step3-text').style.color = 'var(--text)';
+    document.getElementById('step3-text').textContent = name + '이(가) 응답 중... 3자 통화 연결 중';
+  }, 800);
+
+  setTimeout(() => {
+    document.getElementById('step3-dot').className = 'step-dot done';
+    document.getElementById('step3-dot').textContent = '✓';
+    document.getElementById('step3-text').textContent = '3자 통화 연결 완료 — ' + name + ' 참여 중';
+    document.getElementById('step4-dot').className = 'step-dot active';
+    document.getElementById('step4-dot').textContent = '4';
+    document.getElementById('step4-text').style.color = 'var(--text)';
+    document.getElementById('step4-text').textContent = '통화 자동 녹음 시작 · 신고 자료 수집 중';
+  }, 2400);
+
+  setTimeout(() => {
+    document.getElementById('step4-dot').className = 'step-dot done';
+    document.getElementById('step4-dot').textContent = '✓';
+    document.getElementById('step4-text').textContent = '녹음 완료 · 경찰청 신고 자료 준비됨';
+    // Close modal and show in-call status bar
+    setTimeout(() => {
+      closeGuardianAlert();
+      document.getElementById('guardian-in-call-bar').classList.add('show');
+      // restore call screen if not there
+      showScreen('call');
+    }, 600);
+  }, 3800);
+}
+
+function msgGuardian(name) {
+  const steps = document.getElementById('guardian-steps');
+  steps.classList.add('show');
+  setTimeout(() => {
+    document.getElementById('step2-dot').className = 'step-dot done';
+    document.getElementById('step2-dot').textContent = '✓';
+    document.getElementById('step2-text').textContent = name + '에게 긴급 문자 발송 완료';
+  }, 600);
+}
+
+function endSuspiciousCall() {
+  closeGuardianAlert();
+  showScreen('summary');
+}
+
+function cancelGuardian() {
+  document.getElementById('guardian-in-call-bar').classList.remove('show');
+}
+
+/* ── Guardian Settings helpers ── */
+function toggleGuardian(btn) {
+  btn.classList.toggle('off');
+  const label = btn.previousElementSibling;
+  label.textContent = btn.classList.contains('off') ? '비활성' : '활성';
+}
+
+function addGuardian() {
+  alert('보호자 추가 기능: 연락처에서 선택하거나 번호를 직접 입력할 수 있습니다.');
+}
+
+function toggleTrigger(card) {
+  card.classList.toggle('active-trigger');
+}
+
+function updateThreshold(val) {
+  document.getElementById('threshold-val').textContent = val + '% 이상 시 알림';
+}
+
+
 const transcriptEl = document.getElementById('live-transcript');
 if (transcriptEl) transcriptEl.scrollTop = transcriptEl.scrollHeight;
+
+/* ─── Contacts ─── */
+const contactData = {
+  '박민준': { avatar: '박', color: '#EBE6FF', textColor: '#6B45F5', sub: '친구 · 010-9912-3344', tags: ['⭐ 즐겨찾기','🤝 친구','✓ AI 분석 47건'] },
+  '엄마':   { avatar: '엄', color: '#FFECEC', textColor: '#CC3333',  sub: '가족 · 010-2211-5566', tags: ['⭐ 즐겨찾기','👨‍👩‍👧 가족','✓ AI 분석 89건'] },
+  '김지현': { avatar: '김', color: '#E0FBF1', textColor: '#0AA870',  sub: '가족(언니) · 010-3344-5566', tags: ['👨‍👩‍👧 가족','✓ AI 분석 31건'] },
+  '이수진': { avatar: '이', color: '#E0FBF1', textColor: '#0AA870',  sub: '친구 · 010-1234-5678', tags: ['🤝 친구','✓ AI 분석 22건'] },
+  '남준혁 과장': { avatar: '남', color: '#EBE6FF', textColor: '#6B45F5', sub: '직장 · 010-7788-1234', tags: ['💼 직장','✓ AI 분석 14건'] },
+  '박서윤 대리': { avatar: '박', color: '#FFF3E0', textColor: '#CC7700', sub: '직장 · 010-5566-7788', tags: ['💼 직장','✓ AI 분석 9건'] },
+  '정현우 팀장': { avatar: '정', color: '#EBE6FF', textColor: '#6B45F5', sub: '직장 · 010-9900-1122', tags: ['💼 직장','✓ AI 분석 28건'] },
+  '최민호': { avatar: '최', color: '#F5F3FF', textColor: '#6B45F5', sub: '친구 · 010-3456-7890', tags: ['🤝 친구','✓ AI 분석 11건'] },
+  '한승우 부장': { avatar: '한', color: '#FFF3E0', textColor: '#CC7700', sub: '직장 · 010-6677-8899', tags: ['💼 직장','✓ AI 분석 6건'] },
+};
+
+function showContactDetail(name) {
+  document.querySelectorAll('.contact-list-item').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  const d = contactData[name] || { avatar: name[0], color: '#EBE6FF', textColor: '#6B45F5', sub: '연락처', tags: [] };
+
+  document.getElementById('detail-avatar').textContent = d.avatar;
+  document.getElementById('detail-avatar').style.background = d.color;
+  document.getElementById('detail-avatar').style.color = d.textColor;
+  document.getElementById('detail-name').textContent = name;
+  document.getElementById('detail-sub').textContent = d.sub;
+
+  document.getElementById('contacts-layout').classList.add('detail-open');
+}
+
+function filterContacts(val) {
+  const v = val.toLowerCase();
+  document.querySelectorAll('.contact-list-item').forEach(el => {
+    const text = el.textContent.toLowerCase();
+    el.style.display = text.includes(v) ? '' : 'none';
+  });
+  document.querySelectorAll('.alpha-section').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.contact-list-item')].some(el => el.style.display !== 'none');
+    sec.style.display = visible ? '' : 'none';
+  });
+}
+
+function setFilter(btn, group) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+
+  document.querySelectorAll('.contact-list-item').forEach(el => {
+    if (group === 'all') { el.style.display = ''; return; }
+    const g = el.getAttribute('data-group') || '';
+    el.style.display = g.includes(group) ? '' : 'none';
+  });
+  document.querySelectorAll('.alpha-section').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.contact-list-item')].some(el => el.style.display !== 'none');
+    sec.style.display = visible ? '' : 'none';
+  });
+}
+
+function quickCallContact(name) {
+  showScreen('call');
+  const nameEl = document.querySelector('.caller-name-xl');
+  if (nameEl) nameEl.textContent = name;
+}
+
+/* ─── Keypad ─── */
+let keypadVal = '';
+const knownNumbers = { '010-9912-3344': '박민준', '010-2211-5566': '엄마', '010-3344-5566': '김지현 (언니)', '1600-0987': '배달의민족' };
+
+function openKeypad() { document.getElementById('keypad-overlay').classList.add('open'); }
+function closeKeypad() { document.getElementById('keypad-overlay').classList.remove('open'); keypadVal = ''; updateKeypadDisplay(); }
+function closeKeypadOutside(e) { if (e.target === document.getElementById('keypad-overlay')) closeKeypad(); }
+
+function keypadPress(k) {
+  if (keypadVal.length >= 13) return;
+  keypadVal += k;
+  updateKeypadDisplay();
+}
+function keypadDelete() {
+  keypadVal = keypadVal.slice(0, -1);
+  updateKeypadDisplay();
+}
+function updateKeypadDisplay() {
+  const formatted = formatPhone(keypadVal);
+  document.getElementById('keypad-number').textContent = formatted || '';
+  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/-/g,'') === keypadVal);
+  document.getElementById('keypad-contact-name').textContent = match ? '📋 ' + match[1] : (keypadVal.length > 3 ? '저장되지 않은 번호' : '');
+}
+function formatPhone(v) {
+  const d = v.replace(/\D/g,'');
+  if (d.length <= 3) return d;
+  if (d.length <= 7) return d.slice(0,3) + '-' + d.slice(3);
+  return d.slice(0,3) + '-' + d.slice(3,7) + '-' + d.slice(7,11);
+}
+function keypadCall() {
+  if (!keypadVal) return;
+  closeKeypad();
+  showScreen('call');
+  const nameEl = document.querySelector('.caller-name-xl');
+  const numEl = document.querySelector('.caller-number');
+  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/-/g,'') === keypadVal);
+  if (nameEl) nameEl.textContent = match ? match[1] : formatPhone(keypadVal);
+  if (numEl) numEl.textContent = match ? '· ' + formatPhone(keypadVal) : '';
+  keypadVal = '';
+}
 </script>
 
 </body>
