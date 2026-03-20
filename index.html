@@ -2,11 +2,16 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ixi-O 3.0 — LG U+ AI 통화 앱</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+/* iOS font smoothing */
+* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
 /* ═══════════════════════════════════════════
    RESET & ROOT
 ═══════════════════════════════════════════ */
@@ -887,12 +892,37 @@ body {
 .threat-details span { font-size: 12px; color: var(--text-soft); }
 
 /* ═══════════════════════════════════════════
-   MOBILE RESPONSIVE
+   ADAPTIVE UI — FLUID TYPOGRAPHY & LAYOUT
+   Targets: 375px (SE), 390px (iPhone 17),
+            428px (Pro Max), 900px+ (tablet/desktop)
 ═══════════════════════════════════════════ */
+
+/* ── Fluid type scale (clamp: min, preferred vw, max) ── */
+:root {
+  --t-xs:   clamp(10px, 2.6vw, 12px);
+  --t-sm:   clamp(11px, 3.0vw, 13px);
+  --t-base: clamp(13px, 3.5vw, 14px);
+  --t-md:   clamp(14px, 3.8vw, 15px);
+  --t-lg:   clamp(16px, 4.2vw, 18px);
+  --t-xl:   clamp(18px, 5.0vw, 22px);
+  --t-2xl:  clamp(20px, 6.0vw, 28px);
+  --t-hero: clamp(18px, 5.5vw, 28px);  /* was 28px fixed */
+
+  /* Fluid spacing */
+  --sp-xs:  clamp(8px,  2vw, 12px);
+  --sp-sm:  clamp(12px, 3vw, 16px);
+  --sp-md:  clamp(16px, 4vw, 24px);
+  --sp-lg:  clamp(20px, 5vw, 32px);
+  --sp-xl:  clamp(24px, 6vw, 40px);
+}
+
+/* ── Tablet / small desktop ── */
 @media (max-width: 900px) {
   .sidebar { display: none; }
-  .page-header { padding: 20px; }
-  .page-body { padding: 16px 20px; }
+  .page-header { padding: var(--sp-md) var(--sp-md) var(--sp-sm); }
+  .page-header-left h1 { font-size: var(--t-xl); }
+  .page-header-left p  { font-size: var(--t-sm); }
+  .page-body { padding: var(--sp-sm) var(--sp-md) var(--sp-lg); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .qa-grid { grid-template-columns: repeat(2, 1fr); }
@@ -905,24 +935,222 @@ body {
   .summary-grid { grid-template-columns: 1fr; }
   .assistant-layout { grid-template-columns: 1fr; }
   .assistant-sidebar { display: none; }
-  .alert-strip { padding: 12px 20px; }
-  .quick-actions { padding: 20px 20px 0; }
-  .security-hero { flex-direction: column; gap: 20px; }
+  .alert-strip { padding: var(--sp-xs) var(--sp-md); }
+  .quick-actions { padding: var(--sp-md) var(--sp-md) 0; }
+  .security-hero { flex-direction: column; gap: var(--sp-md); }
   .threat-counters { grid-template-columns: repeat(3, 1fr); }
   .scan-status-grid { grid-template-columns: 1fr; }
-  .security-body { padding: 20px; }
-  .home-hero { padding: 24px 20px 28px; }
-  .summary-hero { flex-direction: column; gap: 16px; align-items: flex-start; }
-  .calls-table-header { display: none; }
+  .security-body { padding: var(--sp-md); }
+  .summary-hero { flex-direction: column; gap: var(--sp-sm); align-items: flex-start; }
+}
+
+/* ── Mobile (≤480px) — core phone layout ── */
+@media (max-width: 480px) {
+  /* Base font */
+  body { font-size: 14px; -webkit-text-size-adjust: 100%; }
+
+  /* Hero — the main culprit */
+  .home-hero { padding: 18px 16px 20px; }
+  .hero-greeting h2 {
+    font-size: var(--t-hero);   /* ~20px on 390px screen */
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+  }
+  .hero-greeting p { font-size: var(--t-sm); margin-top: 3px; }
+
+  /* AI pill — shrink on small screens */
+  .ai-status-pill {
+    font-size: var(--t-xs);
+    padding: 6px 10px;
+    gap: 6px;
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hero top row */
+  .hero-top { align-items: center; margin-bottom: 16px; }
+
+  /* Stats grid 2×2 */
+  .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .hero-stat { padding: 10px 12px; }
+  .hero-stat-value { font-size: clamp(18px, 5vw, 22px); }
+  .hero-stat-label { font-size: var(--t-xs); }
+
+  /* Alert strip */
+  .alert-strip { padding: 8px 12px; gap: 6px; }
+  .alert-chip { font-size: var(--t-xs); padding: 6px 10px; }
+
+  /* Quick actions 2×2 */
+  .quick-actions { padding: 16px 14px 0; }
+  .qa-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+  .qa-card { padding: 14px 12px; gap: 8px; border-radius: 16px; }
+  .qa-icon { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; }
+  .qa-card-title { font-size: var(--t-base); }
+  .qa-card-desc { display: none; } /* hide desc on small screens */
+
+  /* Section titles */
+  .section-title { font-size: var(--t-md); }
+
+  /* Page headers */
+  .page-header { padding: 14px 16px 12px; flex-wrap: wrap; gap: 8px; }
+  .page-header-left h1 { font-size: var(--t-xl); }
+  .page-actions .btn { padding: 7px 12px; font-size: var(--t-xs); }
+
+  /* Cards */
+  .card { padding: 14px 16px; border-radius: 16px; }
+  .card-title { font-size: var(--t-xs); margin-bottom: 10px; }
+
+  /* Body padding */
+  .page-body { padding: 12px 14px 24px; }
+
+  /* Calls table */
+  .call-name { font-size: var(--t-base); }
+  .call-number, .call-snippet { font-size: var(--t-xs); }
+  .badge { font-size: var(--t-xs); padding: 3px 8px; }
+  .call-row { padding: 11px 14px; }
+
+  /* Summary */
+  .summary-hero { padding: 18px 16px 16px; gap: 12px; }
+  .summary-caller-info h2 { font-size: var(--t-xl); }
+  .summary-caller-info p { font-size: var(--t-xs); }
+  .summary-avatar { width: 48px; height: 48px; font-size: 18px; }
+  .summary-header-actions { flex-wrap: wrap; gap: 6px; }
+  .btn-white { padding: 7px 12px; font-size: var(--t-xs); }
+  .summary-grid { padding: 14px 14px; gap: 12px; }
+  .summary-point { font-size: var(--t-base); }
+
+  /* Todo */
+  .todo-text { font-size: var(--t-base); }
+  .todo-tag { font-size: var(--t-xs); padding: 3px 8px; }
+
+  /* Transcript */
+  .ft-line { font-size: var(--t-base); }
+  .ft-who { min-width: 44px; font-size: var(--t-sm); }
+
+  /* Call screen */
+  .call-main { padding: 20px 16px 24px; }
+  .caller-name-xl { font-size: clamp(22px, 7vw, 32px); }
+  .caller-avatar-xl { width: 80px; height: 80px; font-size: 30px; }
+  .live-pill, .secure-badge { font-size: var(--t-xs); padding: 4px 10px; }
+  .call-timer { font-size: var(--t-sm); }
+  .ctrl { font-size: var(--t-xs); padding: 10px 6px; border-radius: 12px; }
+  .ctrl-icon { font-size: 18px; }
+  .call-controls-row { gap: 7px; }
+  .end-btn { width: 60px; height: 60px; font-size: 22px; }
+  .live-transcript-box { padding: 14px 14px; }
+  .t-line { font-size: var(--t-sm); }
+  .ai-card-floating { padding: 12px 14px; }
+  .ai-card-content { font-size: var(--t-sm); }
+  .ai-card-content strong { font-size: var(--t-base); }
+
+  /* Assistant */
+  .chat-bubble { font-size: var(--t-base); padding: 10px 14px; }
+  .bubble-sender { font-size: var(--t-xs); }
+  .chat-messages { padding: 16px 14px; gap: 12px; }
+  .chat-input-field { font-size: var(--t-base); padding: 10px 14px; }
+  .qp-chip { font-size: var(--t-xs); padding: 5px 11px; }
+
+  /* Security */
+  .security-hero { padding: 20px 16px 18px; }
+  .score-ring { width: 80px; height: 80px; }
+  .score-ring-text { font-size: 20px; }
+  .score-details h2 { font-size: var(--t-lg); }
+  .score-details p { font-size: var(--t-xs); }
+  .threat-counters { gap: 8px; }
+  .threat-counter-value { font-size: 22px; }
+  .threat-counter-label { font-size: var(--t-xs); }
+  .security-body { padding: 12px 14px; }
+  .scan-status-card { padding: 12px 14px; }
+  .scan-status-name { font-size: var(--t-base); }
+  .scan-status-desc { font-size: var(--t-xs); }
+
+  /* Contacts */
+  .contacts-layout { height: calc(100dvh - 60px); }
+  .contact-search-input { font-size: var(--t-base); }
+  .contact-list-name { font-size: var(--t-base); }
+  .contact-list-sub { font-size: var(--t-xs); }
+  .contact-detail-hero { padding: 20px 16px 16px; gap: 14px; }
+  .contact-detail-avatar { width: 68px; height: 68px; font-size: 26px; }
+  .contact-detail-info h2 { font-size: var(--t-xl); }
+  .contact-action-row { grid-template-columns: repeat(4,1fr); padding: 12px 14px; gap: 8px; }
+  .contact-action-btn { padding: 10px 4px; font-size: var(--t-xs); }
+  .contact-action-icon { font-size: 18px; }
+  .contact-detail-body { padding: 12px 14px; gap: 12px; }
+
+  /* Guardian */
+  .guardian-hero { padding: 20px 16px 18px; }
+  .guardian-hero-left h1 { font-size: var(--t-xl); }
+  .guardian-hero-left p { font-size: var(--t-sm); }
+  .guardian-body { padding: 12px 14px; gap: 12px; }
+  .response-stats { grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .resp-stat-value { font-size: 20px; }
+  .resp-stat-label { font-size: var(--t-xs); }
+  .trigger-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .trigger-title { font-size: var(--t-base); }
+  .trigger-desc { font-size: var(--t-xs); }
+  .nw-flow { padding: 12px; gap: 0; }
+  .nw-node-label { font-size: 10px; }
+  .nw-node-icon { width: 38px; height: 38px; font-size: 16px; }
+
+  /* Guardian alert modal */
+  .guardian-alert-modal { border-radius: 20px; }
+  .alert-modal-header { padding: 18px 16px 14px; }
+  .alert-header-info h2 { font-size: var(--t-lg); }
+  .alert-header-info p { font-size: var(--t-sm); }
+  .alert-evidence { padding: 14px 16px; }
+  .ev-text { font-size: var(--t-sm); }
+  .alert-guardian-section { padding: 14px 16px; }
+  .guardian-info p { font-size: var(--t-base); }
+  .guardian-info span { font-size: var(--t-xs); }
+  .guardian-connect-btn { padding: 7px 10px; font-size: var(--t-xs); }
+  .alert-modal-actions { padding: 12px 16px 16px; flex-direction: column; gap: 8px; }
+
+  /* More menu */
+  .more-menu { padding: 10px 14px 28px; }
+  .more-menu-grid { grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .more-menu-icon { font-size: 20px; }
+  .more-menu-label { font-size: 9.5px; }
+
+  /* Mobile nav */
+  .mobile-nav-icon { font-size: 20px; }
+  .mobile-nav-label { font-size: 9.5px; }
+  .mobile-nav-item { padding: 3px 10px; }
+}
+
+/* ── iPhone SE / very small (≤375px) ── */
+@media (max-width: 375px) {
+  .hero-greeting h2 { font-size: 17px; }
+  .ai-status-pill { display: none; } /* hide on SE to avoid overflow */
+  .hero-stats { grid-template-columns: repeat(2,1fr); gap: 6px; }
+  .hero-stat-value { font-size: 16px; }
+  .qa-card { padding: 12px 10px; }
+  .contact-action-row { grid-template-columns: repeat(2,1fr); }
+  .more-menu-grid { grid-template-columns: repeat(4,1fr); }
+}
+
+/* ── Safe area (iPhone notch / Dynamic Island) ── */
+@supports (padding: max(0px)) {
+  .mobile-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .more-menu {
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+  .home-hero {
+    padding-top: max(18px, calc(env(safe-area-inset-top) + 10px));
+  }
 }
 
 /* Mobile nav bar */
 .mobile-nav {
   display: none;
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border);
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 0.5px solid var(--border);
   padding: 10px 0 16px;
   z-index: 100;
 }
@@ -931,6 +1159,7 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   cursor: pointer; border: none; background: none; padding: 4px 14px;
   transition: transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
 }
 .mobile-nav-item:active { transform: scale(0.9); }
 .mobile-nav-icon { font-size: 22px; }
@@ -940,7 +1169,11 @@ body {
 @media (max-width: 900px) {
   .mobile-nav { display: block; }
   .main-content { padding-bottom: 70px; }
+  /* use dynamic viewport height so address bar doesn't cut content */
+  .screen { min-height: 100dvh; }
+  .contacts-layout { height: calc(100dvh - 73px); }
 }
+
 
 /* ═══════════════════════════════════════════
    CONTACTS SCREEN
@@ -1589,6 +1822,55 @@ body {
   .threat-banner.show { flex-wrap: wrap; }
 }
 
+
+/* ── Mobile More Menu ── */
+.more-menu-overlay {
+  display: none; position: fixed; inset: 0; z-index: 150;
+  background: rgba(20,17,42,0.45); backdrop-filter: blur(2px);
+}
+.more-menu-overlay.open { display: block; }
+
+.more-menu {
+  position: fixed; bottom: -280px; left: 0; right: 0; z-index: 160;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px 36px;
+  transition: bottom 0.3s cubic-bezier(0.34,1.1,0.64,1);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+}
+.more-menu.open { bottom: 0; }
+
+.more-menu-handle {
+  width: 40px; height: 4px; border-radius: 100px;
+  background: var(--border); margin: 0 auto 16px;
+}
+.more-menu-title {
+  font-size: 12px; font-weight: 700; color: var(--text-soft);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 14px; padding: 0 4px;
+}
+.more-menu-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+.more-menu-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 6px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1px solid var(--border);
+  cursor: pointer; font-family: inherit; position: relative;
+  transition: all 0.15s;
+}
+.more-menu-item:active { transform: scale(0.95); }
+.more-menu-item.more-highlight {
+  background: var(--p-light); border-color: rgba(91,63,232,0.25);
+}
+.more-menu-icon { font-size: 24px; }
+.more-menu-label { font-size: 10.5px; font-weight: 600; color: var(--text); text-align: center; line-height: 1.3; }
+.more-menu-badge {
+  position: absolute; top: 5px; right: 5px;
+  background: var(--red); color: #fff;
+  font-size: 8px; font-weight: 800;
+  padding: 2px 5px; border-radius: 20px; letter-spacing: 0.3px;
+}
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -2434,7 +2716,7 @@ body {
               </div>
               <div class="detail-info-row">
                 <span class="detail-info-label">이메일</span>
-                <span class="detail-info-value link-val">mjpark@gmail.com</span>
+                <span class="detail-info-value link-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="38555248594a53785f55595154165b5755">[email&#160;protected]</a></span>
               </div>
               <div class="detail-info-row">
                 <span class="detail-info-label">생일</span>
@@ -3029,18 +3311,40 @@ body {
       <span class="mobile-nav-icon">📋</span>
       <span class="mobile-nav-label">요약</span>
     </button>
-    <button class="mobile-nav-item" id="mob-assistant" onclick="showScreen('assistant')">
-      <span class="mobile-nav-icon">🤖</span>
-      <span class="mobile-nav-label">AI 비서</span>
-    </button>
-    <button class="mobile-nav-item" id="mob-security" onclick="showScreen('security')">
-      <span class="mobile-nav-icon">🛡️</span>
-      <span class="mobile-nav-label">보안</span>
+    <button class="mobile-nav-item" id="mob-more" onclick="toggleMoreMenu()">
+      <span class="mobile-nav-icon">☰</span>
+      <span class="mobile-nav-label">더보기</span>
     </button>
   </div>
 </nav>
 
-<script>
+<!-- Mobile More Menu -->
+<div class="more-menu-overlay" id="more-menu-overlay" onclick="closeMoreMenu()"></div>
+<div class="more-menu" id="more-menu">
+  <div class="more-menu-handle"></div>
+  <div class="more-menu-title">더보기</div>
+  <div class="more-menu-grid">
+    <button class="more-menu-item" onclick="showScreen('assistant');closeMoreMenu()">
+      <span class="more-menu-icon">🤖</span>
+      <span class="more-menu-label">AI 비서</span>
+    </button>
+    <button class="more-menu-item more-highlight" onclick="showScreen('guardian');closeMoreMenu()">
+      <span class="more-menu-icon">🛡️</span>
+      <span class="more-menu-label">보호자 연결</span>
+      <span class="more-menu-badge">NEW</span>
+    </button>
+    <button class="more-menu-item" onclick="showScreen('security');closeMoreMenu()">
+      <span class="more-menu-icon">🔒</span>
+      <span class="more-menu-label">보안 대시보드</span>
+    </button>
+    <button class="more-menu-item" onclick="openKeypad();closeMoreMenu()">
+      <span class="more-menu-icon">⌨️</span>
+      <span class="more-menu-label">키패드</span>
+    </button>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ─── Navigation ─── */
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -3154,12 +3458,36 @@ function addAiBubble(text) {
   container.scrollTop = container.scrollHeight;
 }
 
+/* ─── More Menu ─── */
+function toggleMoreMenu() {
+  const menu = document.getElementById('more-menu');
+  const overlay = document.getElementById('more-menu-overlay');
+  const btn = document.getElementById('mob-more');
+  if (!menu || !overlay) return;
+  const isOpen = menu.classList.contains('open');
+  if (isOpen) {
+    menu.classList.remove('open');
+    overlay.classList.remove('open');
+    if (btn) btn.classList.remove('active');
+  } else {
+    menu.classList.add('open');
+    overlay.classList.add('open');
+    if (btn) btn.classList.add('active');
+  }
+}
+function closeMoreMenu() {
+  const menu = document.getElementById('more-menu');
+  const overlay = document.getElementById('more-menu-overlay');
+  const btn = document.getElementById('mob-more');
+  if (menu) menu.classList.remove('open');
+  if (overlay) overlay.classList.remove('open');
+  if (btn) btn.classList.remove('active');
+}
+
 /* ─── Guardian / Voice Phishing Alert ─── */
 function simulateThreat() {
-  // Show threat banner on call screen
   const banner = document.getElementById('threat-banner-bar');
-  banner.classList.add('show');
-  // Change secure badge to danger
+  if (banner) banner.classList.add('show');
   const secureBadge = document.querySelector('.secure-badge');
   if (secureBadge) {
     secureBadge.textContent = '⚠ 위협 감지됨';
@@ -3167,72 +3495,77 @@ function simulateThreat() {
     secureBadge.style.borderColor = 'rgba(255,79,79,0.5)';
     secureBadge.style.color = '#FF8080';
   }
-  // Auto-open alert after 1.5s for demo
   setTimeout(openGuardianAlert, 1500);
 }
 
 function hideThreatBanner() {
-  document.getElementById('threat-banner-bar').classList.remove('show');
+  const banner = document.getElementById('threat-banner-bar');
+  if (banner) banner.classList.remove('show');
 }
 
 function openGuardianAlert() {
   hideThreatBanner();
-  document.getElementById('guardian-alert-overlay').classList.add('open');
-  // Reset steps
+  const overlay = document.getElementById('guardian-alert-overlay');
+  if (overlay) overlay.classList.add('open');
   resetSteps();
 }
 
 function closeGuardianAlert() {
-  document.getElementById('guardian-alert-overlay').classList.remove('open');
+  const overlay = document.getElementById('guardian-alert-overlay');
+  if (overlay) overlay.classList.remove('open');
 }
 
 function resetSteps() {
-  document.getElementById('guardian-steps').classList.remove('show');
-  document.getElementById('step2-dot').className = 'step-dot active';
-  document.getElementById('step2-dot').textContent = '2';
-  document.getElementById('step2-text').textContent = '보호자에게 긴급 알림 전송 중...';
-  document.getElementById('step3-dot').className = 'step-dot pending';
-  document.getElementById('step3-dot').textContent = '3';
-  document.getElementById('step3-text').style.color = 'var(--text-soft)';
-  document.getElementById('step4-dot').className = 'step-dot pending';
-  document.getElementById('step4-dot').textContent = '4';
-  document.getElementById('step4-text').style.color = 'var(--text-soft)';
+  const steps = document.getElementById('guardian-steps');
+  if (!steps) return;
+  steps.classList.remove('show');
+  const s2d = document.getElementById('step2-dot');
+  const s2t = document.getElementById('step2-text');
+  const s3d = document.getElementById('step3-dot');
+  const s3t = document.getElementById('step3-text');
+  const s4d = document.getElementById('step4-dot');
+  const s4t = document.getElementById('step4-text');
+  if (s2d) { s2d.className = 'step-dot active'; s2d.textContent = '2'; }
+  if (s2t) s2t.textContent = '보호자에게 긴급 알림 전송 중...';
+  if (s3d) { s3d.className = 'step-dot pending'; s3d.textContent = '3'; }
+  if (s3t) s3t.style.color = 'var(--text-soft)';
+  if (s4d) { s4d.className = 'step-dot pending'; s4d.textContent = '4'; }
+  if (s4t) s4t.style.color = 'var(--text-soft)';
 }
 
 function connectGuardian(name, number) {
   const steps = document.getElementById('guardian-steps');
+  if (!steps) return;
   steps.classList.add('show');
-
-  // Animate step progression
   setTimeout(() => {
-    document.getElementById('step2-dot').className = 'step-dot done';
-    document.getElementById('step2-dot').textContent = '✓';
-    document.getElementById('step2-text').textContent = name + '에게 긴급 알림 발송 완료';
-    document.getElementById('step3-dot').className = 'step-dot active';
-    document.getElementById('step3-dot').textContent = '3';
-    document.getElementById('step3-text').style.color = 'var(--text)';
-    document.getElementById('step3-text').textContent = name + '이(가) 응답 중... 3자 통화 연결 중';
+    const s2d = document.getElementById('step2-dot');
+    const s2t = document.getElementById('step2-text');
+    const s3d = document.getElementById('step3-dot');
+    const s3t = document.getElementById('step3-text');
+    if (s2d) { s2d.className = 'step-dot done'; s2d.textContent = '✓'; }
+    if (s2t) s2t.textContent = name + '에게 긴급 알림 발송 완료';
+    if (s3d) { s3d.className = 'step-dot active'; s3d.textContent = '3'; }
+    if (s3t) { s3t.style.color = 'var(--text)'; s3t.textContent = name + '이(가) 응답 중... 3자 통화 연결 중'; }
   }, 800);
-
   setTimeout(() => {
-    document.getElementById('step3-dot').className = 'step-dot done';
-    document.getElementById('step3-dot').textContent = '✓';
-    document.getElementById('step3-text').textContent = '3자 통화 연결 완료 — ' + name + ' 참여 중';
-    document.getElementById('step4-dot').className = 'step-dot active';
-    document.getElementById('step4-dot').textContent = '4';
-    document.getElementById('step4-text').style.color = 'var(--text)';
-    document.getElementById('step4-text').textContent = '통화 자동 녹음 시작 · 신고 자료 수집 중';
+    const s3d = document.getElementById('step3-dot');
+    const s3t = document.getElementById('step3-text');
+    const s4d = document.getElementById('step4-dot');
+    const s4t = document.getElementById('step4-text');
+    if (s3d) { s3d.className = 'step-dot done'; s3d.textContent = '✓'; }
+    if (s3t) s3t.textContent = '3자 통화 연결 완료 — ' + name + ' 참여 중';
+    if (s4d) { s4d.className = 'step-dot active'; s4d.textContent = '4'; }
+    if (s4t) { s4t.style.color = 'var(--text)'; s4t.textContent = '통화 자동 녹음 시작 · 신고 자료 수집 중'; }
   }, 2400);
-
   setTimeout(() => {
-    document.getElementById('step4-dot').className = 'step-dot done';
-    document.getElementById('step4-dot').textContent = '✓';
-    document.getElementById('step4-text').textContent = '녹음 완료 · 경찰청 신고 자료 준비됨';
-    // Close modal and show in-call status bar
+    const s4d = document.getElementById('step4-dot');
+    const s4t = document.getElementById('step4-text');
+    if (s4d) { s4d.className = 'step-dot done'; s4d.textContent = '✓'; }
+    if (s4t) s4t.textContent = '녹음 완료 · 경찰청 신고 자료 준비됨';
     setTimeout(() => {
       closeGuardianAlert();
-      document.getElementById('guardian-in-call-bar').classList.add('show');
-      // restore call screen if not there
+      const bar = document.getElementById('guardian-in-call-bar');
+      if (bar) bar.classList.add('show');
       showScreen('call');
     }, 600);
   }, 3800);
@@ -3240,11 +3573,13 @@ function connectGuardian(name, number) {
 
 function msgGuardian(name) {
   const steps = document.getElementById('guardian-steps');
+  if (!steps) return;
   steps.classList.add('show');
   setTimeout(() => {
-    document.getElementById('step2-dot').className = 'step-dot done';
-    document.getElementById('step2-dot').textContent = '✓';
-    document.getElementById('step2-text').textContent = name + '에게 긴급 문자 발송 완료';
+    const s2d = document.getElementById('step2-dot');
+    const s2t = document.getElementById('step2-text');
+    if (s2d) { s2d.className = 'step-dot done'; s2d.textContent = '✓'; }
+    if (s2t) s2t.textContent = name + '에게 긴급 문자 발송 완료';
   }, 600);
 }
 
@@ -3254,26 +3589,25 @@ function endSuspiciousCall() {
 }
 
 function cancelGuardian() {
-  document.getElementById('guardian-in-call-bar').classList.remove('show');
+  const bar = document.getElementById('guardian-in-call-bar');
+  if (bar) bar.classList.remove('show');
 }
 
 /* ── Guardian Settings helpers ── */
 function toggleGuardian(btn) {
   btn.classList.toggle('off');
   const label = btn.previousElementSibling;
-  label.textContent = btn.classList.contains('off') ? '비활성' : '활성';
+  if (label) label.textContent = btn.classList.contains('off') ? '비활성' : '활성';
 }
-
 function addGuardian() {
-  alert('보호자 추가 기능: 연락처에서 선택하거나 번호를 직접 입력할 수 있습니다.');
+  alert('보호자 추가: 연락처에서 선택하거나 번호를 직접 입력하세요.');
 }
-
 function toggleTrigger(card) {
   card.classList.toggle('active-trigger');
 }
-
 function updateThreshold(val) {
-  document.getElementById('threshold-val').textContent = val + '% 이상 시 알림';
+  const el = document.getElementById('threshold-val');
+  if (el) el.textContent = val + '% 이상 시 알림';
 }
 
 
@@ -3376,12 +3710,4 @@ function keypadCall() {
   showScreen('call');
   const nameEl = document.querySelector('.caller-name-xl');
   const numEl = document.querySelector('.caller-number');
-  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/-/g,'') === keypadVal);
-  if (nameEl) nameEl.textContent = match ? match[1] : formatPhone(keypadVal);
-  if (numEl) numEl.textContent = match ? '· ' + formatPhone(keypadVal) : '';
-  keypadVal = '';
-}
-</script>
-
-</body>
-</html>
+  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/
