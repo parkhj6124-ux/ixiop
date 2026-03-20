@@ -1136,7 +1136,7 @@ body {
     padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
   .more-menu {
-    padding-bottom: max(28px, env(safe-area-inset-bottom));
+    padding-bottom: max(36px, calc(env(safe-area-inset-bottom) + 20px));
   }
   .home-hero {
     padding-top: max(18px, calc(env(safe-area-inset-top) + 10px));
@@ -1825,20 +1825,34 @@ body {
 
 /* ── Mobile More Menu ── */
 .more-menu-overlay {
-  display: none; position: fixed; inset: 0; z-index: 150;
-  background: rgba(20,17,42,0.45); backdrop-filter: blur(2px);
+  display: none;
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(20,17,42,0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
 }
-.more-menu-overlay.open { display: block; }
+.more-menu-overlay.open {
+  display: block;
+  pointer-events: auto;
+}
 
 .more-menu {
-  position: fixed; bottom: -280px; left: 0; right: 0; z-index: 160;
+  position: fixed;
+  bottom: -400px;   /* large enough to fully hide */
+  left: 0; right: 0;
+  z-index: 160;
   background: var(--surface);
   border-radius: 24px 24px 0 0;
   padding: 12px 20px 36px;
-  transition: bottom 0.3s cubic-bezier(0.34,1.1,0.64,1);
+  transition: bottom 0.32s cubic-bezier(0.34, 1.1, 0.64, 1);
   box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+  pointer-events: none;   /* ignore touches when hidden */
 }
-.more-menu.open { bottom: 0; }
+.more-menu.open {
+  bottom: 0;
+  pointer-events: auto;
+}
 
 .more-menu-handle {
   width: 40px; height: 4px; border-radius: 100px;
@@ -1893,32 +1907,32 @@ body {
     </div>
 
     <div class="sidebar-section-label">메인</div>
-    <button class="nav-item active" id="nav-home" onclick="showScreen('home')">
+    <button class="nav-item active" id="nav-home" data-ac="nav:home">
       <span class="nav-icon">🏠</span> 홈
       <span class="nav-badge green">안전</span>
     </button>
-    <button class="nav-item" id="nav-call" onclick="showScreen('call')">
+    <button class="nav-item" id="nav-call" data-ac="nav:call">
       <span class="nav-icon">📞</span> 통화 중
       <span class="nav-badge" style="background:var(--green);">LIVE</span>
     </button>
-    <button class="nav-item" id="nav-summary" onclick="showScreen('summary')">
+    <button class="nav-item" id="nav-summary" data-ac="nav:summary">
       <span class="nav-icon">📋</span> 통화 요약
       <span class="nav-badge">3</span>
     </button>
 
-    <button class="nav-item" id="nav-contacts" onclick="showScreen('contacts')">
+    <button class="nav-item" id="nav-contacts" data-ac="nav:contacts">
       <span class="nav-icon">👥</span> 연락처
     </button>
 
     <div class="sidebar-section-label">AI 기능</div>
-    <button class="nav-item" id="nav-assistant" onclick="showScreen('assistant')">
+    <button class="nav-item" id="nav-assistant" data-ac="nav:assistant">
       <span class="nav-icon">🤖</span> AI 비서
     </button>
-    <button class="nav-item" id="nav-guardian" onclick="showScreen('guardian')">
+    <button class="nav-item" id="nav-guardian" data-ac="nav:guardian">
       <span class="nav-icon">🛡️</span> 보호자 연결
       <span class="nav-badge" style="background:#CC2200;">NEW</span>
     </button>
-    <button class="nav-item" id="nav-security" onclick="showScreen('security')">
+    <button class="nav-item" id="nav-security" data-ac="nav:security">
       <span class="nav-icon">🛡️</span> 보안 대시보드
       <span class="nav-badge red">2</span>
     </button>
@@ -1973,7 +1987,7 @@ body {
         <div class="alert-chip safe">✓ 오늘 보이스피싱 0건</div>
         <div class="alert-chip info">◎ 통화 3건 AI 요약 완료</div>
         <div class="alert-chip warn">⚠ 할 일 2개 남음</div>
-        <div class="alert-chip info" onclick="showScreen('call')">📞 현재 통화 진행 중 → 보기</div>
+        <div class="alert-chip info" data-ac="nav:call">📞 현재 통화 진행 중 → 보기</div>
       </div>
 
       <div class="quick-actions">
@@ -1981,22 +1995,22 @@ body {
           <div class="section-title">빠른 기능</div>
         </div>
         <div class="qa-grid">
-          <div class="qa-card" onclick="showScreen('call')">
+          <div class="qa-card" data-ac="nav:call">
             <div class="qa-icon" style="background:#EBE6FF;">📞</div>
             <div class="qa-card-title">AI 통화 보기</div>
             <div class="qa-card-desc">실시간 자막 및 AI 정보 카드 보기</div>
           </div>
-          <div class="qa-card" onclick="showScreen('summary')">
+          <div class="qa-card" data-ac="nav:summary">
             <div class="qa-icon" style="background:#E0FBF1;">📋</div>
             <div class="qa-card-title">통화 요약</div>
             <div class="qa-card-desc">AI가 자동으로 정리한 핵심 내용</div>
           </div>
-          <div class="qa-card" onclick="showScreen('assistant')">
+          <div class="qa-card" data-ac="nav:assistant">
             <div class="qa-icon" style="background:#EBE6FF;">🤖</div>
             <div class="qa-card-title">AI 비서</div>
             <div class="qa-card-desc">과거 통화 검색 및 질문하기</div>
           </div>
-          <div class="qa-card" onclick="showScreen('security')">
+          <div class="qa-card" data-ac="nav:security">
             <div class="qa-icon" style="background:#FFECEC;">🛡️</div>
             <div class="qa-card-title">보안 대시보드</div>
             <div class="qa-card-desc">실시간 위협 탐지 현황</div>
@@ -2019,7 +2033,7 @@ body {
             <span>상태</span>
           </div>
 
-          <div class="call-row" onclick="showScreen('summary')">
+          <div class="call-row" data-ac="nav:summary">
             <div class="caller-cell">
               <div class="call-avatar" style="background:#EBE6FF;color:#6B45F5;">박</div>
               <div>
@@ -2100,7 +2114,7 @@ body {
           <p>박민준 · AI 실시간 분석 활성화</p>
         </div>
         <div class="page-actions">
-          <button class="btn btn-ghost" onclick="showScreen('home')">← 홈으로</button>
+          <button class="btn btn-ghost" data-ac="nav:home">← 홈으로</button>
         </div>
       </div>
 
@@ -2113,8 +2127,8 @@ body {
             <p>금융기관 사칭 · 긴박감 유도 · 계좌이체 요구 감지 — 신뢰도 96.4%</p>
           </div>
           <div class="threat-banner-actions">
-            <button class="threat-action-btn primary" onclick="openGuardianAlert()">🛡️ 보호자 연결</button>
-            <button class="threat-action-btn secondary" onclick="hideThreatBanner()">무시</button>
+            <button class="threat-action-btn primary" data-ac="guardian:open">🛡️ 보호자 연결</button>
+            <button class="threat-action-btn secondary" data-ac="threat:hide">무시</button>
           </div>
         </div>
 
@@ -2134,12 +2148,12 @@ body {
           <div class="guardian-in-call-bar" id="guardian-in-call-bar" style="max-width:600px;">
             <div class="g-bar-dot"></div>
             <div class="g-bar-text"><strong>보호자 연결 중</strong> — 엄마에게 상황 공유됨 · 통화 모니터링 활성</div>
-            <button class="g-bar-cancel" onclick="cancelGuardian()">연결 해제</button>
+            <button class="g-bar-cancel" data-ac="guardian:cancel">연결 해제</button>
           </div>
 
           <!-- Demo trigger button -->
           <div style="max-width:600px;width:100%;margin-bottom:-8px;">
-            <button onclick="simulateThreat()" style="width:100%;padding:10px;background:rgba(204,34,0,0.18);border:1px dashed rgba(255,79,79,0.5);border-radius:12px;color:#FF8080;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.15s;" onmouseover="this.style.background='rgba(204,34,0,0.28)'" onmouseout="this.style.background='rgba(204,34,0,0.18)'">
+            <button data-ac="threat:simulate" style="width:100%;padding:10px;background:rgba(204,34,0,0.18);border:1px dashed rgba(255,79,79,0.5);border-radius:12px;color:#FF8080;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:background 0.15s;" onmouseover="this.style.background='rgba(204,34,0,0.28)'" onmouseout="this.style.background='rgba(204,34,0,0.18)'">
               🎭 [데모] 보이스피싱 탐지 시뮬레이션 →
             </button>
           </div>
@@ -2164,32 +2178,32 @@ body {
 
           <div style="width:100%;max-width:600px;">
             <div class="call-controls-row">
-              <button class="ctrl" id="ctrl-mute" onclick="toggleCtrl(this)">
+              <button class="ctrl" id="ctrl-mute" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">🔇</span><span>음소거</span>
               </button>
-              <button class="ctrl active-ctrl" id="ctrl-sub" onclick="toggleCtrl(this)">
+              <button class="ctrl active-ctrl" id="ctrl-sub" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">📄</span><span>자막 켜짐</span>
               </button>
-              <button class="ctrl" id="ctrl-spk" onclick="toggleCtrl(this)">
+              <button class="ctrl" id="ctrl-spk" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">🔊</span><span>스피커</span>
               </button>
-              <button class="ctrl" id="ctrl-rec" onclick="toggleCtrl(this)">
+              <button class="ctrl" id="ctrl-rec" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">⏺</span><span>녹음</span>
               </button>
-              <button class="ctrl active-ctrl" id="ctrl-ai" onclick="toggleCtrl(this)">
+              <button class="ctrl active-ctrl" id="ctrl-ai" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">🤖</span><span>AI 켜짐</span>
               </button>
-              <button class="ctrl" id="ctrl-hold" onclick="toggleCtrl(this)">
+              <button class="ctrl" id="ctrl-hold" data-ac="ctrl:toggle">
                 <span class="ctrl-icon">⏸</span><span>대기</span>
               </button>
             </div>
 
             <div class="end-call-center" style="margin-top:18px;">
-              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;" onclick="showScreen('summary')">
+              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;" data-ac="nav:summary">
                 <span class="ctrl-icon">👤</span>
               </button>
-              <button class="end-btn" onclick="showScreen('summary')" title="통화 종료 → 요약으로">📵</button>
-              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;background:rgba(91,63,232,0.4);" onclick="showScreen('assistant')">
+              <button class="end-btn" data-ac="nav:summary" title="통화 종료 → 요약으로">📵</button>
+              <button class="ctrl" style="width:64px;height:64px;border-radius:50%;padding:0;background:rgba(91,63,232,0.4);" data-ac="nav:assistant">
                 <span class="ctrl-icon">💬</span>
               </button>
             </div>
@@ -2276,9 +2290,9 @@ body {
           </div>
         </div>
         <div class="summary-header-actions">
-          <button class="btn-white" onclick="showScreen('assistant')">🤖 AI에게 질문</button>
+          <button class="btn-white" data-ac="nav:assistant">🤖 AI에게 질문</button>
           <button class="btn-white">📤 공유</button>
-          <button class="btn-white" onclick="showScreen('home')">← 돌아가기</button>
+          <button class="btn-white" data-ac="nav:home">← 돌아가기</button>
         </div>
       </div>
 
@@ -2299,22 +2313,22 @@ body {
             <div class="card-title">✅ AI가 만든 할 일 목록</div>
             <div class="todo-list" id="todo-list">
               <div class="todo-item">
-                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-check" data-ac="todo:toggle"></div>
                 <div class="todo-text">식당 예약 확정 문자 받기</div>
                 <div class="todo-tag" style="background:#EBE6FF;color:#6B45F5;">오늘</div>
               </div>
               <div class="todo-item">
-                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-check" data-ac="todo:toggle"></div>
                 <div class="todo-text">토요일 18:20 출발 알람 설정</div>
                 <div class="todo-tag" style="background:#EBE6FF;color:#6B45F5;">토요일</div>
               </div>
               <div class="todo-item">
-                <div class="todo-check" onclick="toggleTodo(this)"></div>
+                <div class="todo-check" data-ac="todo:toggle"></div>
                 <div class="todo-text">박민준에게 예약 확인 카카오톡 보내기</div>
                 <div class="todo-tag" style="background:#FFF3E0;color:#CC7700;">오늘</div>
               </div>
               <div class="todo-item">
-                <div class="todo-check done" onclick="toggleTodo(this)"></div>
+                <div class="todo-check done" data-ac="todo:toggle"></div>
                 <div class="todo-text done-text">맛집 위치 및 교통편 확인 완료</div>
                 <div class="todo-tag" style="background:#F5F5F5;color:#999;">완료</div>
               </div>
@@ -2376,9 +2390,9 @@ body {
             <div class="card-title">🤖 AI에게 더 물어보기</div>
             <div style="font-size:13px;color:var(--text-soft);margin-bottom:12px;">이 통화와 관련된 질문을 AI 비서에게 해보세요</div>
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('박민준이랑 전에 어디서 만났지?')">박민준이랑 전에 어디서 만났지?</button>
-              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('강남 맛집 추천해줘')">강남 맛집 더 추천해줘</button>
-              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" onclick="askAssistant('이번 달 약속 정리해줘')">이번 달 약속 정리해줘</button>
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" data-ac="ask:0">박민준이랑 전에 어디서 만났지?</button>
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" data-ac="ask:1">강남 맛집 더 추천해줘</button>
+              <button class="qp-chip" style="text-align:left;border-radius:var(--r-sm);padding:10px 14px;" data-ac="ask:2">이번 달 약속 정리해줘</button>
             </div>
           </div>
 
@@ -2394,7 +2408,7 @@ body {
           <p>통화 내용 기반 개인 AI — 모든 기억을 가지고 있어요</p>
         </div>
         <div class="page-actions">
-          <button class="btn btn-ghost" onclick="showScreen('home')">← 홈</button>
+          <button class="btn btn-ghost" data-ac="nav:home">← 홈</button>
           <button class="btn btn-primary">+ 새 대화</button>
         </div>
       </div>
@@ -2472,16 +2486,16 @@ body {
           </div>
 
           <div class="quick-prompts">
-            <button class="qp-chip" onclick="quickPrompt('이번 주 약속 정리해줘')">이번 주 약속</button>
-            <button class="qp-chip" onclick="quickPrompt('최근 스팸 전화 목록 보여줘')">스팸 목록</button>
-            <button class="qp-chip" onclick="quickPrompt('할 일 목록 보여줘')">할 일 목록</button>
-            <button class="qp-chip" onclick="quickPrompt('오늘 통화 요약해줘')">오늘 통화</button>
+            <button class="qp-chip" data-ac="qp:0">이번 주 약속</button>
+            <button class="qp-chip" data-ac="qp:1">스팸 목록</button>
+            <button class="qp-chip" data-ac="qp:2">할 일 목록</button>
+            <button class="qp-chip" data-ac="qp:3">오늘 통화</button>
           </div>
 
           <div class="chat-input-bar">
             <button class="mic-btn">🎤</button>
-            <input class="chat-input-field" id="chat-input" type="text" placeholder="질문하거나 말씀해 주세요... (Enter로 전송)" onkeydown="handleChatInput(event)" />
-            <button class="send-btn" onclick="sendChat()">↑</button>
+            <input class="chat-input-field" id="chat-input" type="text" placeholder="질문하거나 말씀해 주세요... (Enter로 전송)" data-keydown="chatKeydown" />
+            <button class="send-btn" data-ac="chat:send">↑</button>
           </div>
         </div>
       </div>
@@ -2495,7 +2509,7 @@ body {
           <p>132명 · AI 통화 분석 연동</p>
         </div>
         <div class="page-actions">
-          <button class="btn btn-ghost" onclick="openKeypad()">⌨️ 키패드</button>
+          <button class="btn btn-ghost" data-ac="keypad:open">⌨️ 키패드</button>
           <button class="btn btn-primary">+ 연락처 추가</button>
         </div>
       </div>
@@ -2507,31 +2521,31 @@ body {
           <div class="contacts-search-bar">
             <div class="search-input-wrap">
               <span class="search-icon">🔍</span>
-              <input class="contact-search-input" id="contact-search" type="text" placeholder="이름, 번호, 그룹으로 검색..." oninput="filterContacts(this.value)" />
+              <input class="contact-search-input" id="contact-search" type="text" placeholder="이름, 번호, 그룹으로 검색..." data-input="contactsFilter" />
             </div>
           </div>
           <div class="contact-filter-chips">
-            <button class="filter-chip active-filter" onclick="setFilter(this,'all')">전체</button>
-            <button class="filter-chip" onclick="setFilter(this,'fav')">⭐ 즐겨찾기</button>
-            <button class="filter-chip" onclick="setFilter(this,'recent')">🕐 최근 통화</button>
-            <button class="filter-chip" onclick="setFilter(this,'family')">👨‍👩‍👧 가족</button>
-            <button class="filter-chip" onclick="setFilter(this,'work')">💼 직장</button>
-            <button class="filter-chip" onclick="setFilter(this,'friend')">🤝 친구</button>
+            <button class="filter-chip active-filter" data-ac="filter:all">전체</button>
+            <button class="filter-chip" data-ac="filter:fav">⭐ 즐겨찾기</button>
+            <button class="filter-chip" data-ac="filter:recent">🕐 최근 통화</button>
+            <button class="filter-chip" data-ac="filter:family">👨‍👩‍👧 가족</button>
+            <button class="filter-chip" data-ac="filter:work">💼 직장</button>
+            <button class="filter-chip" data-ac="filter:friend">🤝 친구</button>
           </div>
 
           <div id="contact-list-body">
             <!-- ㄱ -->
             <div class="alpha-section" data-alpha="ㄱ">
               <div class="alpha-label">ㄱ</div>
-              <div class="contact-list-item" onclick="showContactDetail('김지현')" data-group="family fav">
+              <div class="contact-list-item" data-ac="contact:김지현" data-group="family fav">
                 <div class="contact-list-avatar" style="background:#E0FBF1;color:#0AA870;">김<div class="online-dot"></div></div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">김지현 (언니)</div>
                   <div class="contact-list-sub">010-3344-5566 · 가족 · 마지막 통화 어제</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('김지현')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:김지현" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2539,15 +2553,15 @@ body {
             <!-- ㄴ -->
             <div class="alpha-section" data-alpha="ㄴ">
               <div class="alpha-label">ㄴ</div>
-              <div class="contact-list-item" onclick="showContactDetail('남준혁')" data-group="work">
+              <div class="contact-list-item" data-ac="contact:남준혁" data-group="work">
                 <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">남</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">남준혁 과장</div>
                   <div class="contact-list-sub">010-7788-1234 · 직장 · LG U+</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('남준혁 과장')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:남준혁 과장" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2555,26 +2569,26 @@ body {
             <!-- ㅂ -->
             <div class="alpha-section" data-alpha="ㅂ">
               <div class="alpha-label">ㅂ</div>
-              <div class="contact-list-item selected" onclick="showContactDetail('박민준')" data-group="friend fav recent">
+              <div class="contact-list-item selected" data-ac="contact:박민준" data-group="friend fav recent">
                 <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">박<div class="online-dot"></div></div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">박민준 (친구)</div>
                   <div class="contact-list-sub">010-9912-3344 · 친구 · 오늘 통화</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('박민준')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:박민준" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
-              <div class="contact-list-item" onclick="showContactDetail('박서윤')" data-group="work">
+              <div class="contact-list-item" data-ac="contact:박서윤" data-group="work">
                 <div class="contact-list-avatar" style="background:#FFF3E0;color:#CC7700;">박</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">박서윤 대리</div>
                   <div class="contact-list-sub">010-5566-7788 · 직장 · 3일 전 통화</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('박서윤 대리')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:박서윤 대리" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2582,26 +2596,26 @@ body {
             <!-- ㅇ -->
             <div class="alpha-section" data-alpha="ㅇ">
               <div class="alpha-label">ㅇ</div>
-              <div class="contact-list-item" onclick="showContactDetail('엄마')" data-group="family fav">
+              <div class="contact-list-item" data-ac="contact:엄마" data-group="family fav">
                 <div class="contact-list-avatar" style="background:#FFECEC;color:#CC3333;">엄</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">엄마 ⭐</div>
                   <div class="contact-list-sub">010-2211-5566 · 가족 · 어제 통화</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('엄마')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:엄마" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
-              <div class="contact-list-item" onclick="showContactDetail('이수진')" data-group="friend">
+              <div class="contact-list-item" data-ac="contact:이수진" data-group="friend">
                 <div class="contact-list-avatar" style="background:#E0FBF1;color:#0AA870;">이<div class="online-dot"></div></div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">이수진 (친구)</div>
                   <div class="contact-list-sub">010-1234-5678 · 친구 · 2일 전 통화</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('이수진')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:이수진" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2609,15 +2623,15 @@ body {
             <!-- ㅈ -->
             <div class="alpha-section" data-alpha="ㅈ">
               <div class="alpha-label">ㅈ</div>
-              <div class="contact-list-item" onclick="showContactDetail('정현우')" data-group="work recent">
+              <div class="contact-list-item" data-ac="contact:정현우" data-group="work recent">
                 <div class="contact-list-avatar" style="background:#EBE6FF;color:#6B45F5;">정</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">정현우 팀장</div>
                   <div class="contact-list-sub">010-9900-1122 · 직장 · 오늘 통화</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('정현우 팀장')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:정현우 팀장" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2625,15 +2639,15 @@ body {
             <!-- ㅊ -->
             <div class="alpha-section" data-alpha="ㅊ">
               <div class="alpha-label">ㅊ</div>
-              <div class="contact-list-item" onclick="showContactDetail('최민호')" data-group="friend">
+              <div class="contact-list-item" data-ac="contact:최민호" data-group="friend">
                 <div class="contact-list-avatar" style="background:#F5F3FF;color:#6B45F5;">최</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">최민호 (친구)</div>
                   <div class="contact-list-sub">010-3456-7890 · 친구 · 1주일 전</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('최민호')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:최민호" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2641,15 +2655,15 @@ body {
             <!-- ㅎ -->
             <div class="alpha-section" data-alpha="ㅎ">
               <div class="alpha-label">ㅎ</div>
-              <div class="contact-list-item" onclick="showContactDetail('한승우')" data-group="work">
+              <div class="contact-list-item" data-ac="contact:한승우" data-group="work">
                 <div class="contact-list-avatar" style="background:#FFF3E0;color:#CC7700;">한</div>
                 <div class="contact-list-info">
                   <div class="contact-list-name">한승우 부장</div>
                   <div class="contact-list-sub">010-6677-8899 · 직장 · 3일 전</div>
                 </div>
                 <div class="contact-list-actions">
-                  <button class="quick-call-btn" onclick="event.stopPropagation();quickCallContact('한승우 부장')" title="전화">📞</button>
-                  <button class="quick-msg-btn" onclick="event.stopPropagation()" title="문자">💬</button>
+                  <button class="quick-call-btn" data-ac="call:한승우 부장" title="전화">📞</button>
+                  <button class="quick-msg-btn" data-ac="stop" title="문자">💬</button>
                 </div>
               </div>
             </div>
@@ -2673,7 +2687,7 @@ body {
 
           <!-- Action buttons -->
           <div class="contact-action-row">
-            <button class="contact-action-btn primary-action" onclick="quickCallContact('박민준')">
+            <button class="contact-action-btn primary-action" data-ac="call:박민준">
               <span class="contact-action-icon">📞</span>
               <span>전화하기</span>
             </button>
@@ -2681,11 +2695,11 @@ body {
               <span class="contact-action-icon">💬</span>
               <span>문자 보내기</span>
             </button>
-            <button class="contact-action-btn" onclick="showScreen('assistant')">
+            <button class="contact-action-btn" data-ac="nav:assistant">
               <span class="contact-action-icon">🤖</span>
               <span>AI 대화 검색</span>
             </button>
-            <button class="contact-action-btn" onclick="showScreen('summary')">
+            <button class="contact-action-btn" data-ac="nav:summary">
               <span class="contact-action-icon">📋</span>
               <span>통화 요약</span>
             </button>
@@ -2712,7 +2726,7 @@ body {
               <div class="card-title">📱 연락처 정보</div>
               <div class="detail-info-row">
                 <span class="detail-info-label">휴대폰</span>
-                <span class="detail-info-value link-val" onclick="quickCallContact('박민준')">010-9912-3344 📞</span>
+                <span class="detail-info-value link-val" data-ac="call:박민준">010-9912-3344 📞</span>
               </div>
               <div class="detail-info-row">
                 <span class="detail-info-label">이메일</span>
@@ -2763,7 +2777,7 @@ body {
                     <span>강남 오마카세 예약 논의</span>
                   </div>
                   <div class="call-hist-duration">6분 47초</div>
-                  <button class="call-hist-summary-btn" onclick="showScreen('summary')">요약 보기</button>
+                  <button class="call-hist-summary-btn" data-ac="nav:summary">요약 보기</button>
                 </div>
                 <div class="call-hist-row">
                   <div class="call-hist-icon" style="color:var(--text-soft);">📵</div>
@@ -3041,7 +3055,7 @@ body {
         <div class="guardian-manage-card">
           <div class="guardian-manage-header">
             <h3>👨‍👩‍👧 보호자 연락처 관리</h3>
-            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px;" onclick="addGuardian()">+ 보호자 추가</button>
+            <button class="btn btn-primary" style="padding:7px 16px;font-size:12px;" data-ac="guardian:add">+ 보호자 추가</button>
           </div>
 
           <div class="guardian-row">
@@ -3053,7 +3067,7 @@ body {
             <div class="g-priority-badge g-priority-1">1순위</div>
             <div class="g-toggle-wrap">
               <span style="font-size:12px;color:var(--text-soft);">활성</span>
-              <button class="g-toggle" onclick="toggleGuardian(this)"></button>
+              <button class="g-toggle" data-ac="guardian:toggle"></button>
             </div>
           </div>
 
@@ -3066,7 +3080,7 @@ body {
             <div class="g-priority-badge g-priority-2">2순위</div>
             <div class="g-toggle-wrap">
               <span style="font-size:12px;color:var(--text-soft);">활성</span>
-              <button class="g-toggle" onclick="toggleGuardian(this)"></button>
+              <button class="g-toggle" data-ac="guardian:toggle"></button>
             </div>
           </div>
 
@@ -3076,7 +3090,7 @@ body {
               <p style="color:var(--text-soft);">보호자 추가</p>
               <span>최대 5명까지 등록 가능</span>
             </div>
-            <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" onclick="addGuardian()">추가</button>
+            <button class="btn btn-ghost" style="padding:6px 14px;font-size:12px;" data-ac="guardian:add">추가</button>
           </div>
         </div>
 
@@ -3086,32 +3100,32 @@ body {
             <div class="section-title">⚙️ 탐지 시 동작 설정</div>
           </div>
           <div class="trigger-grid">
-            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+            <div class="trigger-card active-trigger" data-ac="trigger:toggle">
               <div class="trigger-icon">📢</div>
               <div class="trigger-title">즉시 알림 팝업</div>
               <div class="trigger-desc">탐지 즉시 화면에 경고 팝업 표시 및 진동</div>
             </div>
-            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+            <div class="trigger-card active-trigger" data-ac="trigger:toggle">
               <div class="trigger-icon">📞</div>
               <div class="trigger-title">보호자 자동 전화</div>
               <div class="trigger-desc">1순위 보호자에게 자동으로 전화 연결</div>
             </div>
-            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+            <div class="trigger-card active-trigger" data-ac="trigger:toggle">
               <div class="trigger-icon">💬</div>
               <div class="trigger-title">보호자 문자 발송</div>
               <div class="trigger-desc">탐지 내용 요약 + 현재 위치 문자 자동 발송</div>
             </div>
-            <div class="trigger-card active-trigger" onclick="toggleTrigger(this)">
+            <div class="trigger-card active-trigger" data-ac="trigger:toggle">
               <div class="trigger-icon">⏺️</div>
               <div class="trigger-title">통화 자동 녹음</div>
               <div class="trigger-desc">탐지 순간부터 통화 내용 자동 녹음 시작</div>
             </div>
-            <div class="trigger-card" onclick="toggleTrigger(this)">
+            <div class="trigger-card" data-ac="trigger:toggle">
               <div class="trigger-icon">🏛️</div>
               <div class="trigger-title">경찰청 자동 신고</div>
               <div class="trigger-desc">경찰청 112에 자동으로 신고 (확인 후 발송)</div>
             </div>
-            <div class="trigger-card" onclick="toggleTrigger(this)">
+            <div class="trigger-card" data-ac="trigger:toggle">
               <div class="trigger-icon">📵</div>
               <div class="trigger-title">자동 통화 차단</div>
               <div class="trigger-desc">고신뢰도(95% 이상) 탐지 시 자동 차단</div>
@@ -3128,7 +3142,7 @@ body {
                 <span style="color:var(--text-soft);">탐지 임계값</span>
                 <span id="threshold-val" style="font-weight:700;color:var(--p);">80% 이상 시 알림</span>
               </div>
-              <input type="range" min="60" max="99" value="80" style="width:100%;" oninput="updateThreshold(this.value)">
+              <input type="range" min="60" max="99" value="80" style="width:100%;" data-input="thresholdUpdate">
               <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-soft);margin-top:4px;">
                 <span>민감 (오탐 多)</span><span>정밀 (오탐 少)</span>
               </div>
@@ -3143,7 +3157,7 @@ body {
         <div class="card" style="border:2px dashed rgba(91,63,232,0.2);background:var(--p-light);">
           <div class="card-title" style="color:var(--p);">🎭 기능 데모</div>
           <p style="font-size:13px;color:var(--text-soft);margin-bottom:14px;">보이스피싱 탐지 알림이 어떻게 작동하는지 직접 체험해 보세요.</p>
-          <button class="btn btn-primary" onclick="openGuardianAlert()" style="width:100%;padding:13px;font-size:14px;">
+          <button class="btn btn-primary" data-ac="guardian:open" style="width:100%;padding:13px;font-size:14px;">
             🚨 보이스피싱 탐지 시뮬레이션 실행
           </button>
         </div>
@@ -3215,8 +3229,8 @@ body {
             <p>엄마 <span style="font-size:10px;background:#FFECEC;color:#CC3333;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">우선순위 1</span></p>
             <span>010-2211-5566 · 가족</span>
           </div>
-          <button class="guardian-connect-btn call-g" onclick="connectGuardian('엄마', '010-2211-5566')">📞 전화 연결</button>
-          <button class="guardian-connect-btn msg-g" onclick="msgGuardian('엄마')">💬 문자</button>
+          <button class="guardian-connect-btn call-g" data-ac="guardian:connect:엄마:010-2211-5566">📞 전화 연결</button>
+          <button class="guardian-connect-btn msg-g" data-ac="guardian:msg:엄마">💬 문자</button>
         </div>
         <div class="guardian-item">
           <div class="guardian-avatar" style="background:#E0FBF1;color:#0AA870;">김</div>
@@ -3224,8 +3238,8 @@ body {
             <p>김지현 (언니) <span style="font-size:10px;background:#E0FBF1;color:#0AA870;padding:2px 7px;border-radius:20px;font-weight:700;margin-left:4px;">우선순위 2</span></p>
             <span>010-3344-5566 · 가족</span>
           </div>
-          <button class="guardian-connect-btn call-g" onclick="connectGuardian('김지현', '010-3344-5566')">📞 전화 연결</button>
-          <button class="guardian-connect-btn msg-g" onclick="msgGuardian('김지현')">💬 문자</button>
+          <button class="guardian-connect-btn call-g" data-ac="guardian:connect:김지현:010-3344-5566">📞 전화 연결</button>
+          <button class="guardian-connect-btn msg-g" data-ac="guardian:msg:김지현">💬 문자</button>
         </div>
       </div>
 
@@ -3251,8 +3265,8 @@ body {
     </div>
 
     <div class="alert-modal-actions">
-      <button class="alert-main-action end-call-action" onclick="endSuspiciousCall()">📵 의심 통화 즉시 종료</button>
-      <button class="alert-main-action dismiss-action" onclick="closeGuardianAlert()">계속 통화 (위험 감수)</button>
+      <button class="alert-main-action end-call-action" data-ac="suspicious:end">📵 의심 통화 즉시 종료</button>
+      <button class="alert-main-action dismiss-action" data-ac="guardian:close">계속 통화 (위험 감수)</button>
     </div>
 
   </div>
@@ -3262,56 +3276,56 @@ body {
 <!-- (injected into main-content via JS) -->
 
 <!-- Keypad Modal -->
-<div class="keypad-overlay" id="keypad-overlay" onclick="closeKeypadOutside(event)">
+<div class="keypad-overlay" id="keypad-overlay" data-ac="keypad:closeOutside">
   <div class="keypad-modal">
     <div class="keypad-display">
       <div>
         <div class="keypad-number" id="keypad-number"></div>
         <div class="keypad-contact-name" id="keypad-contact-name"></div>
       </div>
-      <button class="keypad-delete" onclick="keypadDelete()">⌫</button>
+      <button class="keypad-delete" data-ac="keypad:delete">⌫</button>
     </div>
     <div class="keypad-grid">
-      <button class="key-btn" onclick="keypadPress('1')"><span class="key-number">1</span><span class="key-alpha"></span></button>
-      <button class="key-btn" onclick="keypadPress('2')"><span class="key-number">2</span><span class="key-alpha">ABC</span></button>
-      <button class="key-btn" onclick="keypadPress('3')"><span class="key-number">3</span><span class="key-alpha">DEF</span></button>
-      <button class="key-btn" onclick="keypadPress('4')"><span class="key-number">4</span><span class="key-alpha">GHI</span></button>
-      <button class="key-btn" onclick="keypadPress('5')"><span class="key-number">5</span><span class="key-alpha">JKL</span></button>
-      <button class="key-btn" onclick="keypadPress('6')"><span class="key-number">6</span><span class="key-alpha">MNO</span></button>
-      <button class="key-btn" onclick="keypadPress('7')"><span class="key-number">7</span><span class="key-alpha">PQRS</span></button>
-      <button class="key-btn" onclick="keypadPress('8')"><span class="key-number">8</span><span class="key-alpha">TUV</span></button>
-      <button class="key-btn" onclick="keypadPress('9')"><span class="key-number">9</span><span class="key-alpha">WXYZ</span></button>
-      <button class="key-btn" onclick="keypadPress('*')"><span class="key-number" style="font-size:28px;">*</span></button>
-      <button class="key-btn" onclick="keypadPress('0')"><span class="key-number">0</span><span class="key-alpha">+</span></button>
-      <button class="key-btn" onclick="keypadPress('#')"><span class="key-number">#</span></button>
+      <button class="key-btn" data-ac="key:1"><span class="key-number">1</span><span class="key-alpha"></span></button>
+      <button class="key-btn" data-ac="key:2"><span class="key-number">2</span><span class="key-alpha">ABC</span></button>
+      <button class="key-btn" data-ac="key:3"><span class="key-number">3</span><span class="key-alpha">DEF</span></button>
+      <button class="key-btn" data-ac="key:4"><span class="key-number">4</span><span class="key-alpha">GHI</span></button>
+      <button class="key-btn" data-ac="key:5"><span class="key-number">5</span><span class="key-alpha">JKL</span></button>
+      <button class="key-btn" data-ac="key:6"><span class="key-number">6</span><span class="key-alpha">MNO</span></button>
+      <button class="key-btn" data-ac="key:7"><span class="key-number">7</span><span class="key-alpha">PQRS</span></button>
+      <button class="key-btn" data-ac="key:8"><span class="key-number">8</span><span class="key-alpha">TUV</span></button>
+      <button class="key-btn" data-ac="key:9"><span class="key-number">9</span><span class="key-alpha">WXYZ</span></button>
+      <button class="key-btn" data-ac="key:*"><span class="key-number" style="font-size:28px;">*</span></button>
+      <button class="key-btn" data-ac="key:0"><span class="key-number">0</span><span class="key-alpha">+</span></button>
+      <button class="key-btn" data-ac="key:#"><span class="key-number">#</span></button>
     </div>
-    <button class="key-btn call-key" style="width:100%;aspect-ratio:unset;padding:16px;border-radius:var(--r-sm);margin-bottom:10px;gap:8px;flex-direction:row;" onclick="keypadCall()">
+    <button class="key-btn call-key" style="width:100%;aspect-ratio:unset;padding:16px;border-radius:var(--r-sm);margin-bottom:10px;gap:8px;flex-direction:row;" data-ac="keypad:call">
       <span class="key-number">📞 전화 걸기</span>
     </button>
-    <button class="keypad-close" onclick="closeKeypad()">닫기</button>
+    <button class="keypad-close" data-ac="keypad:close">닫기</button>
   </div>
 </div>
 
 <!-- Mobile Nav -->
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
-    <button class="mobile-nav-item active" id="mob-home" onclick="showScreen('home')">
+    <button class="mobile-nav-item active" id="mob-home" data-ac="nav:home">
       <span class="mobile-nav-icon">🏠</span>
       <span class="mobile-nav-label">홈</span>
     </button>
-    <button class="mobile-nav-item" id="mob-contacts" onclick="showScreen('contacts')">
+    <button class="mobile-nav-item" id="mob-contacts" data-ac="nav:contacts">
       <span class="mobile-nav-icon">👥</span>
       <span class="mobile-nav-label">연락처</span>
     </button>
-    <button class="mobile-nav-item" id="mob-call" onclick="showScreen('call')">
+    <button class="mobile-nav-item" id="mob-call" data-ac="nav:call">
       <span class="mobile-nav-icon">📞</span>
       <span class="mobile-nav-label">통화</span>
     </button>
-    <button class="mobile-nav-item" id="mob-summary" onclick="showScreen('summary')">
+    <button class="mobile-nav-item" id="mob-summary" data-ac="nav:summary">
       <span class="mobile-nav-icon">📋</span>
       <span class="mobile-nav-label">요약</span>
     </button>
-    <button class="mobile-nav-item" id="mob-more" onclick="toggleMoreMenu()">
+    <button class="mobile-nav-item" id="mob-more" data-ac="more:toggle">
       <span class="mobile-nav-icon">☰</span>
       <span class="mobile-nav-label">더보기</span>
     </button>
@@ -3319,370 +3333,229 @@ body {
 </nav>
 
 <!-- Mobile More Menu -->
-<div class="more-menu-overlay" id="more-menu-overlay" onclick="closeMoreMenu()"></div>
+<div class="more-menu-overlay" id="more-menu-overlay" data-ac="more:close"></div>
 <div class="more-menu" id="more-menu">
   <div class="more-menu-handle"></div>
   <div class="more-menu-title">더보기</div>
   <div class="more-menu-grid">
-    <button class="more-menu-item" onclick="showScreen('assistant');closeMoreMenu()">
+    <button class="more-menu-item" data-ac="nav:assistant|more:close">
       <span class="more-menu-icon">🤖</span>
       <span class="more-menu-label">AI 비서</span>
     </button>
-    <button class="more-menu-item more-highlight" onclick="showScreen('guardian');closeMoreMenu()">
+    <button class="more-menu-item more-highlight" data-ac="nav:guardian|more:close">
       <span class="more-menu-icon">🛡️</span>
       <span class="more-menu-label">보호자 연결</span>
       <span class="more-menu-badge">NEW</span>
     </button>
-    <button class="more-menu-item" onclick="showScreen('security');closeMoreMenu()">
+    <button class="more-menu-item" data-ac="nav:security|more:close">
       <span class="more-menu-icon">🔒</span>
       <span class="more-menu-label">보안 대시보드</span>
     </button>
-    <button class="more-menu-item" onclick="openKeypad();closeMoreMenu()">
+    <button class="more-menu-item" data-ac="keypad:open|more:close">
       <span class="more-menu-icon">⌨️</span>
       <span class="more-menu-label">키패드</span>
     </button>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-/* ─── Navigation ─── */
+
+
+<script>
+(function() {
+'use strict';
+
+/* ── Screen navigation ── */
 function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const nav = document.getElementById('nav-' + name);
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  var sc = document.getElementById('screen-' + name);
+  if (sc) sc.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var nav = document.getElementById('nav-' + name);
   if (nav) nav.classList.add('active');
-
-  document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
-  const mob = document.getElementById('mob-' + name);
+  document.querySelectorAll('.mobile-nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var mob = document.getElementById('mob-' + name);
   if (mob) mob.classList.add('active');
-
-  document.querySelector('.main-content').scrollTop = 0;
+  var mc = document.querySelector('.main-content');
+  if (mc) mc.scrollTop = 0;
 }
 
-/* ─── Todo Toggle ─── */
-function toggleTodo(el) {
-  el.classList.toggle('done');
-  const txt = el.nextElementSibling;
-  txt.classList.toggle('done-text');
-}
-
-/* ─── Call Controls ─── */
-function toggleCtrl(el) {
-  el.classList.toggle('active-ctrl');
-  const icon = el.querySelector('.ctrl-icon');
-  const label = el.querySelector('span:last-child');
-  if (el.id === 'ctrl-mute') {
-    label.textContent = el.classList.contains('active-ctrl') ? '음소거 중' : '음소거';
-  }
-  if (el.id === 'ctrl-sub') {
-    label.textContent = el.classList.contains('active-ctrl') ? '자막 켜짐' : '자막 꺼짐';
-  }
-  if (el.id === 'ctrl-rec') {
-    label.textContent = el.classList.contains('active-ctrl') ? '녹음 중' : '녹음';
-  }
-  if (el.id === 'ctrl-ai') {
-    label.textContent = el.classList.contains('active-ctrl') ? 'AI 켜짐' : 'AI 꺼짐';
-  }
-}
-
-/* ─── Call Timer ─── */
-let seconds = 263;
-setInterval(() => {
-  seconds++;
-  const m = String(Math.floor(seconds / 60)).padStart(2, '0');
-  const s = String(seconds % 60).padStart(2, '0');
-  const el = document.getElementById('call-timer');
-  if (el) el.textContent = `00:${m}:${s}`;
-}, 1000);
-
-/* ─── Chat ─── */
-const aiReplies = [
-  '2월 28일 통화 기록에서 찾았습니다. 박민준 씨가 생일에 에어팟 프로나 게임 기프티콘을 원한다고 말씀하셨어요.',
-  '통화 기록을 분석해보니 이번 주 토요일 강남 약속 외에 일요일 오후 3시 헬스장 같이 가기로 한 기록도 있습니다.',
-  '네, 찾았습니다! 관련 내용을 정리해 드릴게요. 추가로 궁금한 점 있으시면 말씀해 주세요.',
-  '통화 기록 기반으로 이번 달 약속을 정리했습니다. 총 5건의 약속이 있으며, 3건은 완료, 2건이 남아있습니다.',
-];
-let aiReplyIdx = 0;
-
-function handleChatInput(e) {
-  if (e.key === 'Enter') sendChat();
-}
-
-function sendChat() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  addUserBubble(text);
-  input.value = '';
-  setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
-  aiReplyIdx++;
-}
-
-function quickPrompt(text) {
-  addUserBubble(text);
-  setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
-  aiReplyIdx++;
-  showScreen('assistant');
-}
-
-function askAssistant(text) {
-  showScreen('assistant');
-  setTimeout(() => {
-    addUserBubble(text);
-    setTimeout(() => addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]), 900);
-    aiReplyIdx++;
-  }, 300);
-}
-
-function addUserBubble(text) {
-  const container = document.getElementById('chat-messages');
-  const typingBubble = document.getElementById('typing-bubble-wrap');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-bubble-wrap user';
-  wrap.innerHTML = `<div class="bubble-sender">민서님</div><div class="chat-bubble user">${text}</div>`;
-  container.insertBefore(wrap, typingBubble);
-  container.scrollTop = container.scrollHeight;
-}
-
-function addAiBubble(text) {
-  const container = document.getElementById('chat-messages');
-  const typingBubble = document.getElementById('typing-bubble-wrap');
-
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-bubble-wrap ai';
-  wrap.innerHTML = `<div class="bubble-sender">ixi AI</div><div class="chat-bubble ai">${text}</div>`;
-  container.insertBefore(wrap, typingBubble);
-  container.scrollTop = container.scrollHeight;
-}
-
-/* ─── More Menu ─── */
+/* ── More menu ── */
 function toggleMoreMenu() {
-  const menu = document.getElementById('more-menu');
-  const overlay = document.getElementById('more-menu-overlay');
-  const btn = document.getElementById('mob-more');
-  if (!menu || !overlay) return;
-  const isOpen = menu.classList.contains('open');
+  var menu = document.getElementById('more-menu');
+  var overlay = document.getElementById('more-menu-overlay');
+  var btn = document.getElementById('mob-more');
+  if (!menu) return;
+  var isOpen = menu.classList.contains('open');
   if (isOpen) {
     menu.classList.remove('open');
-    overlay.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
     if (btn) btn.classList.remove('active');
   } else {
     menu.classList.add('open');
-    overlay.classList.add('open');
+    if (overlay) overlay.classList.add('open');
     if (btn) btn.classList.add('active');
   }
 }
 function closeMoreMenu() {
-  const menu = document.getElementById('more-menu');
-  const overlay = document.getElementById('more-menu-overlay');
-  const btn = document.getElementById('mob-more');
+  var menu = document.getElementById('more-menu');
+  var overlay = document.getElementById('more-menu-overlay');
+  var btn = document.getElementById('mob-more');
   if (menu) menu.classList.remove('open');
   if (overlay) overlay.classList.remove('open');
   if (btn) btn.classList.remove('active');
 }
 
-/* ─── Guardian / Voice Phishing Alert ─── */
-function simulateThreat() {
-  const banner = document.getElementById('threat-banner-bar');
-  if (banner) banner.classList.add('show');
-  const secureBadge = document.querySelector('.secure-badge');
-  if (secureBadge) {
-    secureBadge.textContent = '⚠ 위협 감지됨';
-    secureBadge.style.background = 'rgba(204,34,0,0.4)';
-    secureBadge.style.borderColor = 'rgba(255,79,79,0.5)';
-    secureBadge.style.color = '#FF8080';
-  }
-  setTimeout(openGuardianAlert, 1500);
+/* ── Todo ── */
+function toggleTodo(el) {
+  el.classList.toggle('done');
+  var txt = el.nextElementSibling;
+  if (txt) txt.classList.toggle('done-text');
 }
 
-function hideThreatBanner() {
-  const banner = document.getElementById('threat-banner-bar');
-  if (banner) banner.classList.remove('show');
+/* ── Call controls ── */
+function toggleCtrl(el) {
+  el.classList.toggle('active-ctrl');
+  var label = el.querySelector('span:last-child');
+  if (!label) return;
+  if (el.id === 'ctrl-mute') label.textContent = el.classList.contains('active-ctrl') ? '음소거 중' : '음소거';
+  if (el.id === 'ctrl-sub')  label.textContent = el.classList.contains('active-ctrl') ? '자막 켜짐' : '자막 꺼짐';
+  if (el.id === 'ctrl-rec')  label.textContent = el.classList.contains('active-ctrl') ? '녹음 중' : '녹음';
+  if (el.id === 'ctrl-ai')   label.textContent = el.classList.contains('active-ctrl') ? 'AI 켜짐' : 'AI 꺼짐';
 }
 
-function openGuardianAlert() {
-  hideThreatBanner();
-  const overlay = document.getElementById('guardian-alert-overlay');
-  if (overlay) overlay.classList.add('open');
-  resetSteps();
+/* ── Call timer ── */
+var seconds = 263;
+setInterval(function() {
+  seconds++;
+  var m = String(Math.floor(seconds / 60)).padStart(2, '0');
+  var s = String(seconds % 60).padStart(2, '0');
+  var el = document.getElementById('call-timer');
+  if (el) el.textContent = '00:' + m + ':' + s;
+}, 1000);
+
+/* ── Chat ── */
+var aiReplies = [
+  '2월 28일 통화 기록에서 찾았습니다. 박민준 씨가 생일에 에어팟 프로나 게임 기프티콘을 원한다고 말씀하셨어요.',
+  '통화 기록을 분석해보니 이번 주 토요일 강남 약속 외에 일요일 오후 3시 헬스장 같이 가기로 한 기록도 있습니다.',
+  '네, 찾았습니다! 관련 내용을 정리해 드릴게요. 추가로 궁금한 점 있으시면 말씀해 주세요.',
+  '통화 기록 기반으로 이번 달 약속을 정리했습니다. 총 5건의 약속이 있으며, 3건은 완료, 2건이 남아있습니다.',
+];
+var aiReplyIdx = 0;
+
+function sendChat() {
+  var input = document.getElementById('chat-input');
+  if (!input) return;
+  var text = input.value.trim();
+  if (!text) return;
+  addUserBubble(text);
+  input.value = '';
+  setTimeout(function(){ addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]); }, 900);
+  aiReplyIdx++;
+}
+function quickPrompt(text) {
+  addUserBubble(text);
+  setTimeout(function(){ addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]); }, 900);
+  aiReplyIdx++;
+  showScreen('assistant');
+}
+function askAssistant(text) {
+  showScreen('assistant');
+  setTimeout(function() {
+    addUserBubble(text);
+    setTimeout(function(){ addAiBubble(aiReplies[aiReplyIdx % aiReplies.length]); }, 900);
+    aiReplyIdx++;
+  }, 300);
+}
+function addUserBubble(text) {
+  var container = document.getElementById('chat-messages');
+  var typing = document.getElementById('typing-bubble-wrap');
+  if (!container) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'chat-bubble-wrap user';
+  wrap.innerHTML = '<div class="bubble-sender">민서님</div><div class="chat-bubble user">' + text + '</div>';
+  container.insertBefore(wrap, typing);
+  container.scrollTop = container.scrollHeight;
+}
+function addAiBubble(text) {
+  var container = document.getElementById('chat-messages');
+  var typing = document.getElementById('typing-bubble-wrap');
+  if (!container) return;
+  var wrap = document.createElement('div');
+  wrap.className = 'chat-bubble-wrap ai';
+  wrap.innerHTML = '<div class="bubble-sender">ixi AI</div><div class="chat-bubble ai">' + text + '</div>';
+  container.insertBefore(wrap, typing);
+  container.scrollTop = container.scrollHeight;
 }
 
-function closeGuardianAlert() {
-  const overlay = document.getElementById('guardian-alert-overlay');
-  if (overlay) overlay.classList.remove('open');
-}
-
-function resetSteps() {
-  const steps = document.getElementById('guardian-steps');
-  if (!steps) return;
-  steps.classList.remove('show');
-  const s2d = document.getElementById('step2-dot');
-  const s2t = document.getElementById('step2-text');
-  const s3d = document.getElementById('step3-dot');
-  const s3t = document.getElementById('step3-text');
-  const s4d = document.getElementById('step4-dot');
-  const s4t = document.getElementById('step4-text');
-  if (s2d) { s2d.className = 'step-dot active'; s2d.textContent = '2'; }
-  if (s2t) s2t.textContent = '보호자에게 긴급 알림 전송 중...';
-  if (s3d) { s3d.className = 'step-dot pending'; s3d.textContent = '3'; }
-  if (s3t) s3t.style.color = 'var(--text-soft)';
-  if (s4d) { s4d.className = 'step-dot pending'; s4d.textContent = '4'; }
-  if (s4t) s4t.style.color = 'var(--text-soft)';
-}
-
-function connectGuardian(name, number) {
-  const steps = document.getElementById('guardian-steps');
-  if (!steps) return;
-  steps.classList.add('show');
-  setTimeout(() => {
-    const s2d = document.getElementById('step2-dot');
-    const s2t = document.getElementById('step2-text');
-    const s3d = document.getElementById('step3-dot');
-    const s3t = document.getElementById('step3-text');
-    if (s2d) { s2d.className = 'step-dot done'; s2d.textContent = '✓'; }
-    if (s2t) s2t.textContent = name + '에게 긴급 알림 발송 완료';
-    if (s3d) { s3d.className = 'step-dot active'; s3d.textContent = '3'; }
-    if (s3t) { s3t.style.color = 'var(--text)'; s3t.textContent = name + '이(가) 응답 중... 3자 통화 연결 중'; }
-  }, 800);
-  setTimeout(() => {
-    const s3d = document.getElementById('step3-dot');
-    const s3t = document.getElementById('step3-text');
-    const s4d = document.getElementById('step4-dot');
-    const s4t = document.getElementById('step4-text');
-    if (s3d) { s3d.className = 'step-dot done'; s3d.textContent = '✓'; }
-    if (s3t) s3t.textContent = '3자 통화 연결 완료 — ' + name + ' 참여 중';
-    if (s4d) { s4d.className = 'step-dot active'; s4d.textContent = '4'; }
-    if (s4t) { s4t.style.color = 'var(--text)'; s4t.textContent = '통화 자동 녹음 시작 · 신고 자료 수집 중'; }
-  }, 2400);
-  setTimeout(() => {
-    const s4d = document.getElementById('step4-dot');
-    const s4t = document.getElementById('step4-text');
-    if (s4d) { s4d.className = 'step-dot done'; s4d.textContent = '✓'; }
-    if (s4t) s4t.textContent = '녹음 완료 · 경찰청 신고 자료 준비됨';
-    setTimeout(() => {
-      closeGuardianAlert();
-      const bar = document.getElementById('guardian-in-call-bar');
-      if (bar) bar.classList.add('show');
-      showScreen('call');
-    }, 600);
-  }, 3800);
-}
-
-function msgGuardian(name) {
-  const steps = document.getElementById('guardian-steps');
-  if (!steps) return;
-  steps.classList.add('show');
-  setTimeout(() => {
-    const s2d = document.getElementById('step2-dot');
-    const s2t = document.getElementById('step2-text');
-    if (s2d) { s2d.className = 'step-dot done'; s2d.textContent = '✓'; }
-    if (s2t) s2t.textContent = name + '에게 긴급 문자 발송 완료';
-  }, 600);
-}
-
-function endSuspiciousCall() {
-  closeGuardianAlert();
-  showScreen('summary');
-}
-
-function cancelGuardian() {
-  const bar = document.getElementById('guardian-in-call-bar');
-  if (bar) bar.classList.remove('show');
-}
-
-/* ── Guardian Settings helpers ── */
-function toggleGuardian(btn) {
-  btn.classList.toggle('off');
-  const label = btn.previousElementSibling;
-  if (label) label.textContent = btn.classList.contains('off') ? '비활성' : '활성';
-}
-function addGuardian() {
-  alert('보호자 추가: 연락처에서 선택하거나 번호를 직접 입력하세요.');
-}
-function toggleTrigger(card) {
-  card.classList.toggle('active-trigger');
-}
-function updateThreshold(val) {
-  const el = document.getElementById('threshold-val');
-  if (el) el.textContent = val + '% 이상 시 알림';
-}
-
-
-const transcriptEl = document.getElementById('live-transcript');
-if (transcriptEl) transcriptEl.scrollTop = transcriptEl.scrollHeight;
-
-/* ─── Contacts ─── */
-const contactData = {
-  '박민준': { avatar: '박', color: '#EBE6FF', textColor: '#6B45F5', sub: '친구 · 010-9912-3344', tags: ['⭐ 즐겨찾기','🤝 친구','✓ AI 분석 47건'] },
-  '엄마':   { avatar: '엄', color: '#FFECEC', textColor: '#CC3333',  sub: '가족 · 010-2211-5566', tags: ['⭐ 즐겨찾기','👨‍👩‍👧 가족','✓ AI 분석 89건'] },
-  '김지현': { avatar: '김', color: '#E0FBF1', textColor: '#0AA870',  sub: '가족(언니) · 010-3344-5566', tags: ['👨‍👩‍👧 가족','✓ AI 분석 31건'] },
-  '이수진': { avatar: '이', color: '#E0FBF1', textColor: '#0AA870',  sub: '친구 · 010-1234-5678', tags: ['🤝 친구','✓ AI 분석 22건'] },
-  '남준혁 과장': { avatar: '남', color: '#EBE6FF', textColor: '#6B45F5', sub: '직장 · 010-7788-1234', tags: ['💼 직장','✓ AI 분석 14건'] },
-  '박서윤 대리': { avatar: '박', color: '#FFF3E0', textColor: '#CC7700', sub: '직장 · 010-5566-7788', tags: ['💼 직장','✓ AI 분석 9건'] },
-  '정현우 팀장': { avatar: '정', color: '#EBE6FF', textColor: '#6B45F5', sub: '직장 · 010-9900-1122', tags: ['💼 직장','✓ AI 분석 28건'] },
-  '최민호': { avatar: '최', color: '#F5F3FF', textColor: '#6B45F5', sub: '친구 · 010-3456-7890', tags: ['🤝 친구','✓ AI 분석 11건'] },
-  '한승우 부장': { avatar: '한', color: '#FFF3E0', textColor: '#CC7700', sub: '직장 · 010-6677-8899', tags: ['💼 직장','✓ AI 분석 6건'] },
+/* ── Contacts ── */
+var contactData = {
+  '박민준':    { avatar:'박', color:'#EBE6FF', tc:'#6B45F5', sub:'친구 · 010-9912-3344' },
+  '엄마':      { avatar:'엄', color:'#FFECEC', tc:'#CC3333', sub:'가족 · 010-2211-5566' },
+  '김지현':    { avatar:'김', color:'#E0FBF1', tc:'#0AA870', sub:'가족(언니) · 010-3344-5566' },
+  '이수진':    { avatar:'이', color:'#E0FBF1', tc:'#0AA870', sub:'친구 · 010-1234-5678' },
+  '남준혁':    { avatar:'남', color:'#EBE6FF', tc:'#6B45F5', sub:'직장 · 010-7788-1234' },
+  '박서윤':    { avatar:'박', color:'#FFF3E0', tc:'#CC7700', sub:'직장 · 010-5566-7788' },
+  '정현우':    { avatar:'정', color:'#EBE6FF', tc:'#6B45F5', sub:'직장 · 010-9900-1122' },
+  '최민호':    { avatar:'최', color:'#F5F3FF', tc:'#6B45F5', sub:'친구 · 010-3456-7890' },
+  '한승우':    { avatar:'한', color:'#FFF3E0', tc:'#CC7700', sub:'직장 · 010-6677-8899' },
 };
-
 function showContactDetail(name) {
-  document.querySelectorAll('.contact-list-item').forEach(el => el.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-
-  const d = contactData[name] || { avatar: name[0], color: '#EBE6FF', textColor: '#6B45F5', sub: '연락처', tags: [] };
-
-  document.getElementById('detail-avatar').textContent = d.avatar;
-  document.getElementById('detail-avatar').style.background = d.color;
-  document.getElementById('detail-avatar').style.color = d.textColor;
-  document.getElementById('detail-name').textContent = name;
-  document.getElementById('detail-sub').textContent = d.sub;
-
-  document.getElementById('contacts-layout').classList.add('detail-open');
+  document.querySelectorAll('.contact-list-item').forEach(function(el){ el.classList.remove('selected'); });
+  var d = contactData[name] || { avatar: name[0], color:'#EBE6FF', tc:'#6B45F5', sub:'연락처' };
+  var av = document.getElementById('detail-avatar');
+  var nm = document.getElementById('detail-name');
+  var sb = document.getElementById('detail-sub');
+  if (av) { av.textContent = d.avatar; av.style.background = d.color; av.style.color = d.tc; }
+  if (nm) nm.textContent = name;
+  if (sb) sb.textContent = d.sub;
+  document.getElementById('contacts-layout') && document.getElementById('contacts-layout').classList.add('detail-open');
 }
-
 function filterContacts(val) {
-  const v = val.toLowerCase();
-  document.querySelectorAll('.contact-list-item').forEach(el => {
-    const text = el.textContent.toLowerCase();
-    el.style.display = text.includes(v) ? '' : 'none';
+  var v = val.toLowerCase();
+  document.querySelectorAll('.contact-list-item').forEach(function(el){
+    el.style.display = el.textContent.toLowerCase().includes(v) ? '' : 'none';
   });
-  document.querySelectorAll('.alpha-section').forEach(sec => {
-    const visible = [...sec.querySelectorAll('.contact-list-item')].some(el => el.style.display !== 'none');
-    sec.style.display = visible ? '' : 'none';
+  document.querySelectorAll('.alpha-section').forEach(function(sec){
+    var vis = Array.from(sec.querySelectorAll('.contact-list-item')).some(function(el){ return el.style.display !== 'none'; });
+    sec.style.display = vis ? '' : 'none';
   });
 }
-
 function setFilter(btn, group) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active-filter'));
+  document.querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active-filter'); });
   btn.classList.add('active-filter');
-
-  document.querySelectorAll('.contact-list-item').forEach(el => {
+  document.querySelectorAll('.contact-list-item').forEach(function(el){
     if (group === 'all') { el.style.display = ''; return; }
-    const g = el.getAttribute('data-group') || '';
-    el.style.display = g.includes(group) ? '' : 'none';
+    el.style.display = (el.getAttribute('data-group') || '').includes(group) ? '' : 'none';
   });
-  document.querySelectorAll('.alpha-section').forEach(sec => {
-    const visible = [...sec.querySelectorAll('.contact-list-item')].some(el => el.style.display !== 'none');
-    sec.style.display = visible ? '' : 'none';
+  document.querySelectorAll('.alpha-section').forEach(function(sec){
+    var vis = Array.from(sec.querySelectorAll('.contact-list-item')).some(function(el){ return el.style.display !== 'none'; });
+    sec.style.display = vis ? '' : 'none';
   });
 }
-
 function quickCallContact(name) {
   showScreen('call');
-  const nameEl = document.querySelector('.caller-name-xl');
-  if (nameEl) nameEl.textContent = name;
+  var el = document.querySelector('.caller-name-xl');
+  if (el) el.textContent = name;
 }
 
-/* ─── Keypad ─── */
-let keypadVal = '';
-const knownNumbers = { '010-9912-3344': '박민준', '010-2211-5566': '엄마', '010-3344-5566': '김지현 (언니)', '1600-0987': '배달의민족' };
-
-function openKeypad() { document.getElementById('keypad-overlay').classList.add('open'); }
-function closeKeypad() { document.getElementById('keypad-overlay').classList.remove('open'); keypadVal = ''; updateKeypadDisplay(); }
-function closeKeypadOutside(e) { if (e.target === document.getElementById('keypad-overlay')) closeKeypad(); }
-
+/* ── Keypad ── */
+var keypadVal = '';
+var knownNumbers = {
+  '010-9912-3344': '박민준',
+  '010-2211-5566': '엄마',
+  '010-3344-5566': '김지현 (언니)',
+  '1600-0987': '배달의민족'
+};
+function openKeypad() {
+  var el = document.getElementById('keypad-overlay');
+  if (el) el.classList.add('open');
+}
+function closeKeypad() {
+  var el = document.getElementById('keypad-overlay');
+  if (el) el.classList.remove('open');
+  keypadVal = '';
+  updateKeypadDisplay();
+}
 function keypadPress(k) {
   if (keypadVal.length >= 13) return;
   keypadVal += k;
@@ -3693,13 +3566,15 @@ function keypadDelete() {
   updateKeypadDisplay();
 }
 function updateKeypadDisplay() {
-  const formatted = formatPhone(keypadVal);
-  document.getElementById('keypad-number').textContent = formatted || '';
-  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/-/g,'') === keypadVal);
-  document.getElementById('keypad-contact-name').textContent = match ? '📋 ' + match[1] : (keypadVal.length > 3 ? '저장되지 않은 번호' : '');
+  var formatted = formatPhone(keypadVal);
+  var numEl = document.getElementById('keypad-number');
+  var nameEl = document.getElementById('keypad-contact-name');
+  if (numEl) numEl.textContent = formatted || '';
+  var match = Object.entries(knownNumbers).find(function(e){ return e[0].replace(/-/g,'') === keypadVal; });
+  if (nameEl) nameEl.textContent = match ? '📋 ' + match[1] : (keypadVal.length > 3 ? '저장되지 않은 번호' : '');
 }
 function formatPhone(v) {
-  const d = v.replace(/\D/g,'');
+  var d = v.replace(/\D/g,'');
   if (d.length <= 3) return d;
   if (d.length <= 7) return d.slice(0,3) + '-' + d.slice(3);
   return d.slice(0,3) + '-' + d.slice(3,7) + '-' + d.slice(7,11);
@@ -3708,6 +3583,188 @@ function keypadCall() {
   if (!keypadVal) return;
   closeKeypad();
   showScreen('call');
-  const nameEl = document.querySelector('.caller-name-xl');
-  const numEl = document.querySelector('.caller-number');
-  const match = Object.entries(knownNumbers).find(([num]) => num.replace(/
+  var nameEl = document.querySelector('.caller-name-xl');
+  var numEl = document.querySelector('.caller-number');
+  var match = Object.entries(knownNumbers).find(function(e){ return e[0].replace(/-/g,'') === keypadVal; });
+  if (nameEl) nameEl.textContent = match ? match[1] : formatPhone(keypadVal);
+  if (numEl) numEl.textContent = match ? '· ' + formatPhone(keypadVal) : '';
+  keypadVal = '';
+}
+
+/* ── Guardian ── */
+function simulateThreat() {
+  var banner = document.getElementById('threat-banner-bar');
+  if (banner) banner.classList.add('show');
+  var sb = document.querySelector('.secure-badge');
+  if (sb) { sb.textContent = '⚠ 위협 감지됨'; sb.style.background='rgba(204,34,0,0.4)'; sb.style.color='#FF8080'; }
+  setTimeout(openGuardianAlert, 1500);
+}
+function hideThreatBanner() {
+  var b = document.getElementById('threat-banner-bar');
+  if (b) b.classList.remove('show');
+}
+function openGuardianAlert() {
+  hideThreatBanner();
+  var o = document.getElementById('guardian-alert-overlay');
+  if (o) o.classList.add('open');
+  resetSteps();
+}
+function closeGuardianAlert() {
+  var o = document.getElementById('guardian-alert-overlay');
+  if (o) o.classList.remove('open');
+}
+function resetSteps() {
+  var s = document.getElementById('guardian-steps');
+  if (!s) return;
+  s.classList.remove('show');
+  ['step2-dot','step3-dot','step4-dot'].forEach(function(id,i){
+    var d = document.getElementById(id);
+    if (d) { d.className = i===0 ? 'step-dot active' : 'step-dot pending'; d.textContent = String(i+2); }
+  });
+  var t2 = document.getElementById('step2-text'); if(t2) t2.textContent = '보호자에게 긴급 알림 전송 중...';
+  var t3 = document.getElementById('step3-text'); if(t3) t3.style.color='var(--text-soft)';
+  var t4 = document.getElementById('step4-text'); if(t4) t4.style.color='var(--text-soft)';
+}
+function connectGuardian(name, number) {
+  var steps = document.getElementById('guardian-steps');
+  if (!steps) return;
+  steps.classList.add('show');
+  setTimeout(function(){
+    var d2=document.getElementById('step2-dot'); if(d2){d2.className='step-dot done';d2.textContent='✓';}
+    var t2=document.getElementById('step2-text'); if(t2) t2.textContent=name+'에게 긴급 알림 발송 완료';
+    var d3=document.getElementById('step3-dot'); if(d3){d3.className='step-dot active';d3.textContent='3';}
+    var t3=document.getElementById('step3-text'); if(t3){t3.style.color='var(--text)';t3.textContent=name+'이(가) 응답 중... 3자 통화 연결 중';}
+  }, 800);
+  setTimeout(function(){
+    var d3=document.getElementById('step3-dot'); if(d3){d3.className='step-dot done';d3.textContent='✓';}
+    var t3=document.getElementById('step3-text'); if(t3) t3.textContent='3자 통화 연결 완료 — '+name+' 참여 중';
+    var d4=document.getElementById('step4-dot'); if(d4){d4.className='step-dot active';d4.textContent='4';}
+    var t4=document.getElementById('step4-text'); if(t4){t4.style.color='var(--text)';t4.textContent='통화 자동 녹음 시작 · 신고 자료 수집 중';}
+  }, 2400);
+  setTimeout(function(){
+    var d4=document.getElementById('step4-dot'); if(d4){d4.className='step-dot done';d4.textContent='✓';}
+    var t4=document.getElementById('step4-text'); if(t4) t4.textContent='녹음 완료 · 경찰청 신고 자료 준비됨';
+    setTimeout(function(){
+      closeGuardianAlert();
+      var bar=document.getElementById('guardian-in-call-bar');
+      if(bar) bar.classList.add('show');
+      showScreen('call');
+    }, 600);
+  }, 3800);
+}
+function msgGuardian(name) {
+  var steps=document.getElementById('guardian-steps');
+  if(!steps) return;
+  steps.classList.add('show');
+  setTimeout(function(){
+    var d2=document.getElementById('step2-dot'); if(d2){d2.className='step-dot done';d2.textContent='✓';}
+    var t2=document.getElementById('step2-text'); if(t2) t2.textContent=name+'에게 긴급 문자 발송 완료';
+  }, 600);
+}
+function endSuspiciousCall() { closeGuardianAlert(); showScreen('summary'); }
+function cancelGuardian() {
+  var bar=document.getElementById('guardian-in-call-bar');
+  if(bar) bar.classList.remove('show');
+}
+function toggleGuardian(btn) {
+  btn.classList.toggle('off');
+  var lbl=btn.previousElementSibling;
+  if(lbl) lbl.textContent=btn.classList.contains('off')?'비활성':'활성';
+}
+function addGuardian() { alert('보호자 추가: 연락처에서 선택하거나 번호를 직접 입력하세요.'); }
+function toggleTrigger(card) { card.classList.toggle('active-trigger'); }
+function updateThreshold(val) {
+  var el=document.getElementById('threshold-val');
+  if(el) el.textContent=val+'% 이상 시 알림';
+}
+
+/* ── Quick prompts texts ── */
+var QP_TEXTS = ['이번 주 약속 정리해줘','최근 스팸 전화 목록 보여줘','할 일 목록 보여줘','오늘 통화 요약해줘'];
+var ASK_TEXTS = ['박민준이랑 전에 어디서 만났지?','강남 맛집 추천해줘','이번 달 약속 정리해줘'];
+
+/* ════════════════════════════════════════
+   SINGLE EVENT DELEGATION HANDLER
+   Replaces all 124 onclick attributes
+════════════════════════════════════════ */
+document.addEventListener('click', function(e) {
+  /* Walk up to find a data-ac element */
+  var el = e.target;
+  while (el && el !== document.body) {
+    var ac = el.getAttribute('data-ac');
+    if (ac) {
+      e.stopPropagation();
+      /* Execute each | separated action */
+      ac.split('|').forEach(function(action) {
+        handleAction(action.trim(), el, e);
+      });
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+
+function handleAction(ac, el, e) {
+  /* nav:screen */
+  if (ac.startsWith('nav:'))        { showScreen(ac.slice(4)); return; }
+  /* more menu */
+  if (ac === 'more:toggle')         { toggleMoreMenu(); return; }
+  if (ac === 'more:close')          { closeMoreMenu(); return; }
+  /* keypad */
+  if (ac === 'keypad:open')         { openKeypad(); return; }
+  if (ac === 'keypad:close')        { closeKeypad(); return; }
+  if (ac === 'keypad:call')         { keypadCall(); return; }
+  if (ac === 'keypad:delete')       { keypadDelete(); return; }
+  if (ac === 'keypad:closeOutside') { if (e.target === document.getElementById('keypad-overlay')) closeKeypad(); return; }
+  if (ac.startsWith('key:'))        { keypadPress(ac.slice(4)); return; }
+  /* todo & ctrl */
+  if (ac === 'todo:toggle')         { toggleTodo(el); return; }
+  if (ac === 'ctrl:toggle')         { toggleCtrl(el); return; }
+  /* chat */
+  if (ac === 'chat:send')           { sendChat(); return; }
+  if (ac.startsWith('qp:'))         { quickPrompt(QP_TEXTS[parseInt(ac.slice(3))]); return; }
+  if (ac.startsWith('ask:'))        { askAssistant(ASK_TEXTS[parseInt(ac.slice(4))]); return; }
+  /* guardian */
+  if (ac === 'guardian:open')       { openGuardianAlert(); return; }
+  if (ac === 'guardian:close')      { closeGuardianAlert(); return; }
+  if (ac === 'guardian:cancel')     { cancelGuardian(); return; }
+  if (ac === 'guardian:add')        { addGuardian(); return; }
+  if (ac === 'guardian:toggle')     { toggleGuardian(el); return; }
+  if (ac.startsWith('guardian:connect:')) {
+    var parts = ac.split(':'); connectGuardian(parts[2], parts[3]); return;
+  }
+  if (ac.startsWith('guardian:msg:')) { msgGuardian(ac.slice(13)); return; }
+  /* threat */
+  if (ac === 'threat:simulate')     { simulateThreat(); return; }
+  if (ac === 'threat:hide')         { hideThreatBanner(); return; }
+  if (ac === 'suspicious:end')      { endSuspiciousCall(); return; }
+  /* trigger & threshold */
+  if (ac === 'trigger:toggle')      { toggleTrigger(el); return; }
+  /* contacts */
+  if (ac.startsWith('contact:'))    { showContactDetail(ac.slice(8)); return; }
+  if (ac.startsWith('call:'))       { e.stopPropagation(); quickCallContact(ac.slice(5)); return; }
+  if (ac === 'stop')                { e.stopPropagation(); return; }
+  /* filter */
+  if (ac.startsWith('filter:'))     { setFilter(el, ac.slice(7)); return; }
+}
+
+/* ── input / keydown delegation ── */
+document.addEventListener('input', function(e) {
+  var di = e.target.getAttribute('data-input');
+  if (di === 'contactsFilter') filterContacts(e.target.value);
+  if (di === 'thresholdUpdate') updateThreshold(e.target.value);
+});
+document.addEventListener('keydown', function(e) {
+  var dk = e.target.getAttribute('data-keydown');
+  if (dk === 'chatKeydown' && e.key === 'Enter') sendChat();
+});
+
+/* ── Init on DOM ready ── */
+document.addEventListener('DOMContentLoaded', function() {
+  var t = document.getElementById('live-transcript');
+  if (t) t.scrollTop = t.scrollHeight;
+});
+
+})(); /* end IIFE */
+</script>
+</body>
+</html>
